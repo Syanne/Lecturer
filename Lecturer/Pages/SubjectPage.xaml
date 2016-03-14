@@ -1,0 +1,38 @@
+﻿<Page x:Class="Lecturer.SubjectPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Lecturer"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="PageStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid>
+        <Popup Margin="10,10,0,13" 
+               Name="ActionPopup" 
+               HorizontalAlignment="Center"   
+               VerticalAlignment="Center" 
+               Width="auto" Height="auto">
+
+            <StackPanel Orientation="Vertical" Style="{StaticResource StartPageSP}">
+                <TextBlock FontSize="18" 
+                           LineStackingStrategy="MaxHeight" 
+                           TextWrapping="WrapWithOverflow" 
+                           Text="Ви вже вивчили цю тему. Виберіть один з варіантів дій"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Name="LectionBtn" Tag="0" Click="PopupButton_Click"/>
+                    <Button Name="InfoBtn" Tag="1" Click="PopupButton_Click"/>
+                    <Button Name="BackBtn" Tag="2" Click="PopupButton_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </Popup>
+    </Grid>
+</Page>
