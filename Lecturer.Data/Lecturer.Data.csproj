@@ -44,26 +44,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataProcessor\PersonalDataFileProsessor.cs" />
-    <Compile Include="DataProcessor\LoadDataFromServer.cs" />
+    <Compile Include="Processor\DocxProcessor.cs" />
+    <Compile Include="Processor\PDFProcessor.cs" />
+    <Compile Include="Processor\XMLProcessor.cs" />
+    <Compile Include="Processor\LoadDataFromServer.cs" />
     <Compile Include="Entities\Cource.cs" />
     <Compile Include="Entities\Person.cs" />
     <Compile Include="Entities\QuizItem.cs" />
     <Compile Include="Entities\Subject.cs" />
     <Compile Include="Entities\Topic.cs" />
-    <Compile Include="Processor\DataBaseFileParser.cs" />
+    <Compile Include="Processor\ExcelFileProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="VBIDE">
-      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
-      <VersionMajor>5</VersionMajor>
-      <VersionMinor>3</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

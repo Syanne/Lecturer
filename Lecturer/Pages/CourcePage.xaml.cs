@@ -1,8 +1,8 @@
-﻿using Lecturer.Data.Entities;
+﻿using Lector.DataProcessor.DataProcessor;
+using Lecturer.Data.Entities;
 using Lecturer.Data.Processor;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 
@@ -25,8 +25,9 @@ namespace Lecturer.Pages
         /// </summary>
         private void PrepareData()
         {
-            DataBaseFileParser fp = new DataBaseFileParser("ДІД.xlsx", Cource.MyCource.Semester);
-            fp.FillSource(Cource.MyCource.Subjects);
+            Cource.MyCource.Subjects = new List<Subject>();
+            ExcelFileProcessor fp = new ExcelFileProcessor("ДІД.xlsx", Cource.MyCource.Semester);
+            Cource.MyCource.Subjects = fp.FillSource();
 
             if (Cource.MyCource.Subjects == null)
                 Cource.MyCource.Subjects = new List<Subject>() { new Subject() { Name = "Рассписание не найдено", Hours = "--" } };
@@ -37,7 +38,8 @@ namespace Lecturer.Pages
         private void myList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             NavigationService nav = NavigationService.GetNavigationService(this);
-            nav.Navigate(new Uri("Pages/SubjectPage.xaml", UriKind.RelativeOrAbsolute));
+            nav.Navigate(new Uri("Pages/LectionPage.xaml", UriKind.RelativeOrAbsolute));
+
         }
 
     }

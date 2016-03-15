@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
-using System.Windows.Shapes;
 
 namespace Lecturer.Pages
 {
@@ -25,44 +24,28 @@ namespace Lecturer.Pages
 
         }
 
+        /// <summary>
+        /// Загрузка персональных данных пользователя
+        /// </summary>
+        /// <returns>удалось ли загрузить файл</returns>
         private bool TryLoadUserData()
         {
-            XMLFileProcessor processor = new XMLFileProcessor("settings.xml");
+            XMLProcessor processor = new XMLProcessor("settings.xml");
 
             if (File.Exists("settings.xml"))
             {
-                string username = processor.ReadValue("userdata", "username");
-                string password = processor.ReadValue("userdata", "password");
+                string username = processor.ReadValue(false, "userdata", "username");
+                string password = processor.ReadValue(false, "userdata", "password");
                 if (username == "" || password == "")
                     return false;
 
                 Cource.MyCource.Subjects = new List<Subject>();
-                Cource.MyCource.CourceNumber = processor.ReadValue("userdata", "cource");
-                Cource.MyCource.Semester = processor.ReadValue("userdata", "semester");
+                Cource.MyCource.CourceNumber = processor.ReadValue(false, "userdata", "cource");
+                Cource.MyCource.Semester = processor.ReadValue(false, "userdata", "semester");
 
                 return true;
             }
             else return false;
-        }
-
-
-
-        private void ConnectToFolder()
-        {
-            string path = System.IO.Path.Combine(
-                Environment.GetFolderPath(
-                    Environment.SpecialFolder.MyDoc‌​uments),
-                    "Lecturer",
-                    "settings.dat");
-            if (Directory.Exists(path))
-            {
-
-            }
-            else
-            {
-                //string patth = System.IO.Path.GetFullPath(Environment.SpecialFolder.MyDocuments.ToString());
-                //Directory.CreateDirectory(System.IO.Path.Combine(Environment.SpecialFolder.MyDocuments.ToString(), "Lecturer"));
-            }
         }
     }
 }

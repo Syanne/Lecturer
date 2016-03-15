@@ -6,7 +6,7 @@ using System.Data;
 
 namespace Lecturer.Data.Processor
 {
-    public class DataBaseFileParser
+    public class ExcelFileProcessor
     {
         private string ConnectionString { get; set; }
 
@@ -14,7 +14,7 @@ namespace Lecturer.Data.Processor
         private string sheetName;
 
 
-        public DataBaseFileParser(string path, string _semester)
+        public ExcelFileProcessor(string path, string _semester)
         {
             //строка открытия бд (в данном случае - xls/xlst файла)
             ConnectionString = GetConnectionString(path, "No");
@@ -123,8 +123,9 @@ namespace Lecturer.Data.Processor
         /// 
         /// </summary>
         /// <param name="source"></param>
-        public void FillSource(List<Subject> source) 
+        public List<Subject> FillSource() 
         {
+            List<Subject> subj = new List<Subject>();
             DataSet ds = GetDataSet();
             try
             {
@@ -133,18 +134,19 @@ namespace Lecturer.Data.Processor
                 for (int i = 1; i < counter; i++)
                 {
                     DataRow row = table.Rows[i];
-                    source.Add(new Subject
+                    subj.Add(new Subject
                     {
                         Name = row[0].ToString(),
                         Hours = row[1].ToString(),
                         ID = row[2].ToString()
                     });
                 }
-                
+
+                return subj;
             }
-            catch
+            catch(Exception e)
             {
-                source = null;
+                return null;
             }
         }     
     }

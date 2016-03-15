@@ -29,21 +29,23 @@ namespace Lecturer
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            XMLFileProcessor processor = new XMLFileProcessor("settings.xml");
+
+            Cource.MyCource.CourceNumber = "1";
+            Cource.MyCource.Semester = "1";
+
+            XMLProcessor processor = new XMLProcessor("settings.xml");
 
             Dictionary<string, string> dictionary = new Dictionary<string, string>();
 
             dictionary.Add("username", UserName.Text);
             dictionary.Add("password", Password.Password);
-            dictionary.Add("cource", "1");
-            dictionary.Add("semester", "1");
+            dictionary.Add("cource", Cource.MyCource.CourceNumber);
+            dictionary.Add("semester", Cource.MyCource.Semester);
 
             processor.CreateSettingsFile(dictionary);
 
-
             NavigationService nav = NavigationService.GetNavigationService(this);
             nav.Navigate(new Uri("Pages/CourcePage.xaml", UriKind.RelativeOrAbsolute));
-
         }
 
         private void UserName_TextChanged(object sender, TextChangedEventArgs e)
