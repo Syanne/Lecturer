@@ -1,5 +1,6 @@
 ﻿using Lector.DataProcessor.DataProcessor;
 using Lector.DataProcessor.Processor;
+using Lecturer.Data.Entities;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace Lecturer
     public partial class LectionPage : Page
     {
         private bool canOpenFile;
+        Topic topic;
 
         public LectionPage()
         {
@@ -32,8 +34,25 @@ namespace Lecturer
 
             if (canOpenFile == false)
                 ShowInstallationMessage();
+            else
+            {
+                topic = new Topic
+                {
+                    Name = "Frikonomika",
+                    ID = "0",
+                    LectionUri = @"Frikonomika.pdf",
+                    IsStudied = false,
+                    Quiz = null
+                };
+                pdfControl.FilePath = topic.LectionUri;
+            }
+   
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private bool CheckAcrobatInstallation()
         {
             RegistryKey adobe = Registry.LocalMachine.OpenSubKey("Software").OpenSubKey("Adobe");
@@ -60,6 +79,9 @@ namespace Lecturer
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void ShowInstallationMessage()
         {
             if (MessageBox.Show(
@@ -73,6 +95,16 @@ namespace Lecturer
             else
             {
 
+            }
+        }
+
+        private void Next_Click(object sender, RoutedEventArgs e)
+        {
+            if(topic.Quiz == null)
+            {
+                NavigationService nav = NavigationService.GetNavigationService(this);
+                nav.Navigate(new Uri("CourcePage.xaml", UriKind.RelativeOrAbsolute));
+                
             }
         }
     }

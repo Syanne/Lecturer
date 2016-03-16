@@ -9,11 +9,7 @@
       Title="StartPage">
 
     <Page.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="PageStyles.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <ResourceDictionary Source="PageStyles.xaml"/>
     </Page.Resources>
     <Grid>
         <StackPanel Orientation="Vertical"

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 
-namespace Lecturer.Pages
+namespace Lecturer
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -46,6 +46,11 @@ namespace Lecturer.Pages
                 return true;
             }
             else return false;
+        }
+
+        private void mainFrame_ContentRendered(object sender, EventArgs e)
+        {
+            mainFrame.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
         }
     }
 }

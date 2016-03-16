@@ -1,6 +1,6 @@
-﻿namespace Lecturer.Pages
+﻿namespace Lecturer.PDFControl
 {
-    partial class PdfViewer
+    partial class PdfControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,34 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PdfViewer));
-            this.axAcroPDF1 = new AxAcroPDFLib.AxAcroPDF();
-            ((System.ComponentModel.ISupportInitialize)(this.axAcroPDF1)).BeginInit();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PdfControl));
+            this.axAcroPDF = new AxAcroPDFLib.AxAcroPDF();
+            ((System.ComponentModel.ISupportInitialize)(this.axAcroPDF)).BeginInit();
             this.SuspendLayout();
             // 
-            // axAcroPDF1
+            // axAcroPDF
             // 
-            this.axAcroPDF1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.axAcroPDF1.Enabled = true;
-            this.axAcroPDF1.Location = new System.Drawing.Point(0, 0);
-            this.axAcroPDF1.Name = "axAcroPDF1";
-            this.axAcroPDF1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axAcroPDF1.OcxState")));
-            this.axAcroPDF1.Size = new System.Drawing.Size(150, 150);
-            this.axAcroPDF1.TabIndex = 0;
+            this.axAcroPDF.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.axAcroPDF.Enabled = true;
+            this.axAcroPDF.Location = new System.Drawing.Point(0, 0);
+            this.axAcroPDF.Name = "axAcroPDF";
+            this.axAcroPDF.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axAcroPDF.OcxState")));
+            this.axAcroPDF.Size = new System.Drawing.Size(150, 150);
+            this.axAcroPDF.TabIndex = 0;
             // 
-            // PdfViewer
+            // PdfControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.axAcroPDF1);
-            this.Name = "PdfViewer";
-            ((System.ComponentModel.ISupportInitialize)(this.axAcroPDF1)).EndInit();
+            this.Controls.Add(this.axAcroPDF);
+            this.Name = "PdfControl";
+            ((System.ComponentModel.ISupportInitialize)(this.axAcroPDF)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private AxAcroPDFLib.AxAcroPDF axAcroPDF1;
+        private AxAcroPDFLib.AxAcroPDF axAcroPDF;
     }
 }

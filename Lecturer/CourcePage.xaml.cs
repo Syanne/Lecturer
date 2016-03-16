@@ -1,12 +1,11 @@
-﻿using Lector.DataProcessor.DataProcessor;
-using Lecturer.Data.Entities;
+﻿using Lecturer.Data.Entities;
 using Lecturer.Data.Processor;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 
-namespace Lecturer.Pages
+namespace Lecturer
 {
     /// <summary>
     /// Interaction logic for CourcePage.xaml
@@ -18,6 +17,8 @@ namespace Lecturer.Pages
             InitializeComponent();
 
             PrepareData();
+
+            ShowsNavigationUI = false;
         }
 
         /// <summary>
@@ -37,8 +38,9 @@ namespace Lecturer.Pages
 
         private void myList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            myList.SelectedItem = null;
             NavigationService nav = NavigationService.GetNavigationService(this);
-            nav.Navigate(new Uri("Pages/LectionPage.xaml", UriKind.RelativeOrAbsolute));
+            nav.Navigate(new Uri("LectionPage.xaml", UriKind.RelativeOrAbsolute));
 
         }
 
