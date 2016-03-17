@@ -1,31 +1,52 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:Lecturer">
-   
-    <Style TargetType="TextBlock" x:Key="SubjectNameLV">
-        <Setter Property="Margin" Value="20, 5, 30, 5"/>
-        <Setter Property="FontSize" Value="22"/>
-        <Setter Property="MinWidth" Value="400"/>
-        <Setter Property="MaxWidth" Value="400"/>
-        <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+    <Brush x:Key="MainColorBrush">#26a59a</Brush>
+    <Brush x:Key="GrayBackgroundBrush">#f9f9f9</Brush>
+    <FontFamily x:Key="MainFontStyle">Myriad Pro</FontFamily>
+
+
+    <!--<Style TargetType="StackPanel" x:Key="TopStackPanel">
+        <Setter Property="" Value=""/>
+    </Style>-->
+
+    <!--SubjectPage-->
+    <Style TargetType="TextBlock" x:Key="BasicSubjectText">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontFamily" Value="{StaticResource MainFontStyle}"/>
         <Setter Property="LineStackingStrategy" Value="MaxHeight"/>
+        <Setter Property="Foreground" Value="#ff303030"/>
+        <Setter Property="TextWrapping" Value="WrapWithOverflow"/>        
     </Style>
 
-    <Style TargetType="TextBlock" x:Key="SubjectHoursLV">
-        <Setter Property="Margin" Value="10, 5, 10, 5"/>
+    <Style TargetType="Border" x:Key="ItemBorder">
+        <Setter Property="BorderBrush" Value="#d7d7d7"/>
+        <Setter Property="BorderThickness" Value="0, 0, 0, 1"/>
+        <Setter Property="Padding" Value="5, 10, 5, 5"/>
+    </Style>
+    
+    
+    <Style TargetType="TextBlock" x:Key="SubjectWideLV" BasedOn="{StaticResource BasicSubjectText}">
+        <Setter Property="Margin" Value="10, 5, 100, 5"/>
+        <Setter Property="MinWidth" Value="350"/>
+        <Setter Property="MaxWidth" Value="350"/>
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="SubjectSmallLV" BasedOn="{StaticResource BasicSubjectText}">
+        <Setter Property="Margin" Value="0, 5, 0, 5"/>
         <Setter Property="MinWidth" Value="80"/>
         <Setter Property="MaxWidth" Value="80"/>
-        <Setter Property="FontSize" Value="22"/>
         <Setter Property="TextAlignment" Value="Center"/>
     </Style>
 
     <Style TargetType="StackPanel" x:Key="SubjectHeaderSP">
         <Setter Property="Orientation" Value="Horizontal"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
-        <Setter Property="VerticalAlignment" Value="Top"/>
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
         <Setter Property="Height" Value="40"/>
-        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Margin" Value="5, 5, 5, 0"/>
     </Style>
+    <!--SubjectPage-->
 
     <Style TargetType="ListView" x:Key="MainListView">
         <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -35,6 +56,12 @@
         <Setter Property="BorderBrush" Value="Transparent"/>
     </Style>
 
+    <Style TargetType="Grid" x:Key="TopGridPanel">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
+        <Setter Property="Background" Value="{StaticResource GrayBackgroundBrush}"/>
+        <Setter Property="Height" Value="80"/>
+    </Style>
     
     <!--StartPage-->
 
@@ -56,9 +83,9 @@
     </Style>
 
     <Style TargetType="StackPanel" x:Key="StartPageSP">
-        <Setter Property="Width" Value="300"/>
+        <Setter Property="Width" Value="auto"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
-        <Setter Property="Margin" Value="0, 5, 0, 0"/>
+        <Setter Property="Margin" Value="10, 5"/>
     </Style>
 
     <Style TargetType="TextBlock" x:Key="LabelTextBlockStyle">

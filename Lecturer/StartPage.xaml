@@ -9,44 +9,76 @@
       Title="StartPage">
 
     <Page.Resources>
-        <ResourceDictionary Source="PageStyles.xaml"/>
+        <ResourceDictionary Source="themes/PageStyles.xaml"/>
     </Page.Resources>
     <Grid>
+        <Grid VerticalAlignment="Top"
+                    HorizontalAlignment="Stretch"
+                    Background="{StaticResource GrayBackgroundBrush}"
+                    Height="80">
+            <Label Name="tbHeader"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   FontSize="22"
+                   FontFamily="{StaticResource MainFontStyle}"
+                   Foreground="{StaticResource ResourceKey=MainColorBrush}"
+                   Padding="20, 5"
+                   Content="Лектор: система вивчення теоретичного матеріалу"/>
+        </Grid>
         <StackPanel Orientation="Vertical"
+                    Width="230"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
-            <StackPanel Orientation="Horizontal" Style="{StaticResource StartPageSP}">
+            <StackPanel Orientation="Horizontal" 
+                        Style="{StaticResource StartPageSP}">
                 <Label Name="UserNameLabel" 
                        Content="Логін"
-                       Width="100" 
-                       Foreground="#303030"
-                       Margin="10, 5"/>
+                       Width="60" 
+                       FontSize="14"
+                       FontFamily="{StaticResource MainFontStyle}"
+                       Foreground="#9b9fa8"
+                       Margin="0, 5, 5, 5"/>
                 <TextBox Name="UserName" 
-                         Width="100" 
-                         Margin="10, 5" 
+                         Width="140" 
+                         FontSize="14"
+                         FontFamily="{StaticResource MainFontStyle}"
+                         Margin="5, 5, 0, 5" 
+                         VerticalContentAlignment="Center"
                          Foreground="#303030"
-                         Background="#fcfcfc" 
+                         Background="#f2f0f4" 
                          BorderBrush="Transparent"
                          TextChanged="UserName_TextChanged"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Style="{StaticResource StartPageSP}">
+            <StackPanel Orientation="Horizontal" 
+                        Style="{StaticResource StartPageSP}">
                 <Label Name="PasswordLabel" 
-                       Width="100" 
+                       Width="60" 
+                       FontSize="14"
+                       FontFamily="{StaticResource MainFontStyle}"
                        Content="Пароль"
-                       Foreground="#303030"
-                       Margin="10, 5"/>
+                       Foreground="#9b9fa8"
+                       Margin="0, 5, 5, 5"/>
                 <PasswordBox Name="Password" 
                              PasswordChanged="Password_PasswordChanged"
-                             Width="100" 
-                             Margin="10, 5" 
-                             Background="#fcfcfc" 
+                             Width="140" 
+                             FontSize="14"
+                             VerticalContentAlignment="Center"
+                             FontFamily="{StaticResource MainFontStyle}"
+                             Margin="5, 5, 0, 5" 
+                             Background="#f2f0f4" 
                              Foreground="#303030"
                              BorderBrush="Transparent" />
             </StackPanel>
-            <Button Name="Done" IsEnabled="False" 
+            <Button Name="Done" 
                     Click="Done_Click" 
-                    Content="Войти" 
-                    Width="100" Height="30"
+                    Content="Увійти" 
+                    FontSize="14"
+                    VerticalContentAlignment="Center"
+                    FontFamily="{StaticResource MainFontStyle}"
+                    BorderBrush="Transparent"
+                    Background="{StaticResource MainColorBrush}"
+                    Foreground="#ffffff"
+                    Width="auto" Height="35"
                     Margin="10"/>
         </StackPanel>
     </Grid>

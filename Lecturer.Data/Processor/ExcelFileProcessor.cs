@@ -3,22 +3,23 @@ using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
 using System.Data;
+using System.Linq;
 
 namespace Lecturer.Data.Processor
 {
     public class ExcelFileProcessor
     {
         private string ConnectionString { get; set; }
-
+        public string SemesterTitle { get; set; }
 
         private string sheetName;
 
 
-        public ExcelFileProcessor(string path, string _semester)
+        public ExcelFileProcessor(string path, string _group)
         {
             //строка открытия бд (в данном случае - xls/xlst файла)
             ConnectionString = GetConnectionString(path, "No");
-            sheetName = _semester;
+            sheetName = _group;
         }       
 
 
@@ -48,7 +49,7 @@ namespace Lecturer.Data.Processor
 
             return Builder.ConnectionString;
         }
-        
+
 
         /// <summary>
         /// Получаем таблицу, которая соответствует выбранной
@@ -80,7 +81,6 @@ namespace Lecturer.Data.Processor
                         string sheet = dr["TABLE_NAME"].ToString();
                         if (sheet.Contains(sheetName))
                         {
-
                             // получаем все строки
                             cmd.CommandText = "SELECT * FROM [" + sheet + "]";
 
@@ -115,39 +115,56 @@ namespace Lecturer.Data.Processor
             {
                 return null;
             }
-
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="source"></param>
-        public List<Subject> FillSource() 
+        
+        public List<Subject> FillSource()
         {
             List<Subject> subj = new List<Subject>();
             DataSet ds = GetDataSet();
             try
             {
-                int counter = ds.Tables[0].Rows.Count;
                 DataTable table = ds.Tables[0];
-                for (int i = 1; i < counter; i++)
+
+                int counter = table.Rows[0].ItemArray.Count();
+                int teacherName = 0, subjectName = 0;
+                for(int i = 0; i < counter; i++)
+                {
+                    if (table.Rows[0][i].ToString().ToLower() == "викладач")
+                        teacherName = i;
+                    else if (table.Rows[0][i].ToString().ToLower() == "спеціальність")
+                        subjectName = i;
+                }
+
+                SemesterTitle = table.Rows[subjectName+2][1].ToString();
+
+                counter = ds.Tables[0].Rows.Count;
+                for (int i = subjectName; i < counter; i++)
                 {
                     DataRow row = table.Rows[i];
-                    subj.Add(new Subject
+                    if (row[1].ToString() != "")
                     {
-                        Name = row[0].ToString(),
-                        Hours = row[1].ToString(),
-                        ID = row[2].ToString()
-                    });
+                        string hours = (row[2].ToString() == "лк") ? row[3].ToString() : "0";
+                        if (hours != "0")
+                        {
+                            subj.Add(new Subject
+                            {
+                                Name = row[1].ToString(),
+                                Teacher = "Викладач: " + row[teacherName].ToString(),
+                                Hours = hours,
+                                ID = row[2].ToString()
+                            });
+                        }
+                    }
                 }
 
                 return subj;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return null;
             }
-        }     
+        }
+        
     }
 }

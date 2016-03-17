@@ -41,7 +41,7 @@ namespace Lecturer
 
                 Cource.MyCource.Subjects = new List<Subject>();
                 Cource.MyCource.CourceNumber = processor.ReadValue(false, "userdata", "cource");
-                Cource.MyCource.Semester = processor.ReadValue(false, "userdata", "semester");
+                Cource.MyCource.GroupName = processor.ReadValue(false, "userdata", "group");
 
                 return true;
             }

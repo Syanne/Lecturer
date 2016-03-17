@@ -27,12 +27,14 @@ namespace Lecturer
         private void PrepareData()
         {
             Cource.MyCource.Subjects = new List<Subject>();
-            ExcelFileProcessor fp = new ExcelFileProcessor("ДІД.xlsx", Cource.MyCource.Semester);
+            ExcelFileProcessor fp = new ExcelFileProcessor("graph.xls", Cource.MyCource.GroupName);
             Cource.MyCource.Subjects = fp.FillSource();
+            Title.Text = fp.SemesterTitle;
 
             if (Cource.MyCource.Subjects == null)
                 Cource.MyCource.Subjects = new List<Subject>() { new Subject() { Name = "Рассписание не найдено", Hours = "--" } };
-            myList.ItemsSource = Cource.MyCource.Subjects;            
+            myList.ItemsSource = Cource.MyCource.Subjects;  
+                      
         }
 
 

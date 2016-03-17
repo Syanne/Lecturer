@@ -16,20 +16,44 @@
 
 
     <Grid>
-        <StackPanel Style="{StaticResource SubjectHeaderSP}">
-            <TextBlock Text="Назва дисципліни" Style="{StaticResource SubjectNameLV}" FontWeight="SemiBold" />
-            <TextBlock Text="Години" Style="{StaticResource SubjectHoursLV}" FontWeight="SemiBold" />
-        </StackPanel>
+        <Grid Style="{StaticResource TopGridPanel}">
+            <TextBlock Name="Title" 
+                       Height="40"
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Center"
+                       Opacity="0.8"
+                       Padding="10"
+                       Style="{StaticResource BasicSubjectText}"/>
+            <StackPanel Style="{StaticResource SubjectHeaderSP}" 
+                        Margin="5, 5, 5, -5" >
+                <TextBlock Text="Назва дисципліни" 
+                           Opacity="0.7"
+                           Style="{StaticResource SubjectWideLV}"  />
+                <TextBlock Text="Години" 
+                           Opacity="0.7"
+                           Style="{StaticResource SubjectSmallLV}" />
+            </StackPanel>
+        </Grid>
         <ListView Name="myList" 
                   Style="{StaticResource MainListView}"
+                  Margin="10, 80, 10, 10"
                   SelectionChanged="myList_SelectionChanged">
 
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Name}" Style="{StaticResource SubjectNameLV}" />
-                        <TextBlock Text="{Binding Hours}" Style="{StaticResource SubjectHoursLV}"/>
-                    </StackPanel>
+                    <Border Style="{StaticResource ItemBorder}">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{Binding Name}" 
+                                   Style="{StaticResource SubjectWideLV}" />
+                                <TextBlock Text="{Binding Teacher}" 
+                                           FontSize="14"
+                                           Style="{StaticResource SubjectWideLV}" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding Hours}" 
+                                   Style="{StaticResource SubjectSmallLV}"/>
+                        </StackPanel>
+                    </Border>
                 </DataTemplate>
 
             </ListView.ItemTemplate>

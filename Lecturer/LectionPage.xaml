@@ -1,4 +1,6 @@
-﻿<Page xmlns:PDFControl="clr-namespace:Lecturer.PDFControl;assembly=Lecturer.PDFControl"  x:Class="Lecturer.LectionPage"
+﻿<Page x:Class="Lecturer.LectionPage"
+      xmlns:PDFControl="clr-namespace:Lecturer.PDFControl;assembly=Lecturer.PDFControl"  
+
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,9 +9,14 @@
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300">
 
+    <Page.Resources>
+        <ResourceDictionary Source="themes/PageStyles.xaml"/>
+    </Page.Resources>
+    
     <Grid>
         <PDFControl:WpfAcrobatCtrl Name="pdfControl"
                                    Margin="20, 10, 20, 50"
+                                   
                                        />
         <Button Name="Next" Width="100"
                 Height="30" 

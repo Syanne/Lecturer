@@ -25,6 +25,11 @@ namespace Lecturer.Data.Entities
         /// иденитификатор дисциплины
         /// </summary>
         public string ID { get; set; }
+
+        /// <summary>
+        /// Преподаватель(ли)
+        /// </summary>
+        public string Teacher { get; set; }
        
         /// <summary>
         /// коллекция данных о темах, изучаемых в курсе
