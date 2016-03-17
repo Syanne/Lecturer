@@ -40,7 +40,7 @@ namespace Lecturer
                 {
                     Name = "Frikonomika",
                     ID = "0",
-                    LectionUri = @"Frikonomika.pdf",
+                    LectionUri = @"repo/Frikonomika.pdf",
                     IsStudied = false,
                     Quiz = null
                 };

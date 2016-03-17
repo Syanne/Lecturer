@@ -1,4 +1,5 @@
-﻿using Lecturer.Data.Entities;
+﻿using Lecturer.Data.DataProcessor;
+using Lecturer.Data.Entities;
 using Lecturer.Data.Processor;
 using System;
 using System.Collections.Generic;
@@ -26,16 +27,22 @@ namespace Lecturer
         /// </summary>
         private void PrepareData()
         {
-            Cource.MyCource.Subjects = new List<Subject>();
-            ExcelFileProcessor fp = new ExcelFileProcessor("graph.xls", Cource.MyCource.GroupName);
-            Cource.MyCource.Subjects = fp.FillSource();
-            Title.Text = fp.SemesterTitle;
+            if (Cource.MyCource.Subjects == null)
+            {
+                XMLProcessor xProc = new XMLProcessor("settings.xml");
+
+                Cource.MyCource.Subjects = xProc.GetSubjectList();
+            }
+
+
 
             if (Cource.MyCource.Subjects == null)
                 Cource.MyCource.Subjects = new List<Subject>() { new Subject() { Name = "Рассписание не найдено", Hours = "--" } };
             myList.ItemsSource = Cource.MyCource.Subjects;  
                       
         }
+
+        
 
 
         private void myList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -45,6 +52,5 @@ namespace Lecturer
             nav.Navigate(new Uri("LectionPage.xaml", UriKind.RelativeOrAbsolute));
 
         }
-
     }
 }

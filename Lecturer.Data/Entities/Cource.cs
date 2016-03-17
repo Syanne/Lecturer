@@ -16,6 +16,9 @@ namespace Lecturer.Data.Entities
 
         private Cource() { }
 
+        /// <summary>
+        /// Курс дисциплин
+        /// </summary>
         public static Cource MyCource
         {
             get
@@ -36,8 +39,8 @@ namespace Lecturer.Data.Entities
         /// <summary>
         /// Текущий семестр
         /// </summary>
-       // public string Semester { get; set; }
-
+        public string Semester { get; set; }
+        
         /// <summary>
         /// Код групи
         /// </summary>

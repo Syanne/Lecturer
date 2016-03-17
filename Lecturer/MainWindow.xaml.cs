@@ -34,14 +34,14 @@ namespace Lecturer
 
             if (File.Exists("settings.xml"))
             {
-                string username = processor.ReadValue(false, "userdata", "username");
-                string password = processor.ReadValue(false, "userdata", "password");
+                string username = processor.PersonalData.Root.Attribute("username").Value;
+                string password = processor.PersonalData.Root.Attribute("password").Value;
                 if (username == "" || password == "")
                     return false;
 
                 Cource.MyCource.Subjects = new List<Subject>();
-                Cource.MyCource.CourceNumber = processor.ReadValue(false, "userdata", "cource");
-                Cource.MyCource.GroupName = processor.ReadValue(false, "userdata", "group");
+                Cource.MyCource.Semester = processor.PersonalData.Root.Attribute("semester").Value;
+                Cource.MyCource.Subjects = processor.GetSubjectList();
 
                 return true;
             }

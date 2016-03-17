@@ -7,19 +7,30 @@ using System.Linq;
 
 namespace Lecturer.Data.Processor
 {
+    /// <summary>
+    /// Обработка файлов формата xls/xlst
+    /// </summary>
     public class ExcelFileProcessor
     {
-        private string ConnectionString { get; set; }
-        public string SemesterTitle { get; set; }
+        private string connectionString;
 
         private string sheetName;
 
+        /// <summary>
+        /// Название таблицы
+        /// </summary>
+        public string TableTitle { get; set; }
 
-        public ExcelFileProcessor(string path, string _group)
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="path">путь к файлу</param>
+        /// <param name="_sheetName">название таблицы</param>
+        public ExcelFileProcessor(string path, string _sheetName)
         {
             //строка открытия бд (в данном случае - xls/xlst файла)
-            ConnectionString = GetConnectionString(path, "No");
-            sheetName = _group;
+            connectionString = GetConnectionString(path, "No");
+            sheetName = _sheetName;
         }       
 
 
@@ -65,7 +76,7 @@ namespace Lecturer.Data.Processor
             //пытаемся открыть и обработать файл
             try
             {
-                using (OleDbConnection conn = new OleDbConnection(ConnectionString))
+                using (OleDbConnection conn = new OleDbConnection(connectionString))
                 {
                     //подключаемся к источнику данных
                     conn.Open();
@@ -117,7 +128,10 @@ namespace Lecturer.Data.Processor
             }
         }
 
-        
+        /// <summary>
+        /// Список дисциплин
+        /// </summary>
+        /// <returns>список дисциплин</returns>
         public List<Subject> FillSource()
         {
             List<Subject> subj = new List<Subject>();
@@ -136,7 +150,7 @@ namespace Lecturer.Data.Processor
                         subjectName = i;
                 }
 
-                SemesterTitle = table.Rows[subjectName+2][1].ToString();
+                TableTitle = table.Rows[subjectName+2][1].ToString();
 
                 counter = ds.Tables[0].Rows.Count;
                 for (int i = subjectName; i < counter; i++)
@@ -165,6 +179,8 @@ namespace Lecturer.Data.Processor
                 return null;
             }
         }
+        
+
         
     }
 }

@@ -1,15 +1,16 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Lector.DataProcessor.DataProcessor
 {
     public class DocxProcessor
     {
+        /// <summary>
+        /// Обрабатываем параграфы в файле
+        /// </summary>
+        /// <returns>Текст документа, содержащийся в параграфах</returns>
         public StringBuilder ProcessParagraph()
         {
             WordprocessingDocument wordProcessingDocument = WordprocessingDocument.Open("attempt.docx", false, new OpenSettings());
@@ -30,7 +31,6 @@ namespace Lector.DataProcessor.DataProcessor
             }
 
             return wordDocumentText;
-
         }
     }
 }

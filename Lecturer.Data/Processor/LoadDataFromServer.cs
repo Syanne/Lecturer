@@ -29,6 +29,12 @@ namespace Lecturer.Data.DataProcessor
 
             return textFromFile;
         }
+
+
+        public void ProcessTimeTable()
+        {
+
+        }
         
     }
 }
