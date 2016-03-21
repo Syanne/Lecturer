@@ -39,8 +39,8 @@ namespace Lecturer.Data.Entities
         public bool IsStudied { get; set; }
 
         /// <summary>
-        /// Тест по пройденной теме
+        /// есть ли тест по пройденной теме
         /// </summary>
-        public IEnumerable<QuizItem> Quiz { get; set; }
+        public bool HasTest { get; set; }
     }
 }

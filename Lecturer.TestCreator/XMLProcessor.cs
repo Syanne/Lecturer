@@ -1,11 +1,10 @@
-﻿using Lecturer.Data.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace Lecturer.Data.DataProcessor
+namespace Lecturer.TestCreator
 {
     public class XMLProcessor
     {
@@ -32,45 +31,6 @@ namespace Lecturer.Data.DataProcessor
         
 
         #region чтение
-        /// <summary>
-        /// Заполняет структуру данными о списке 
-        /// дисциплин на семестр
-        /// </summary>
-        /// <returns></returns>
-        public List<Subject> GetSubjectList()
-        {
-            List<Subject> subj = new List<Subject>();
-
-            try
-            {
-                //текущий семестр
-                string semNumber = PersonalData.Root.Attribute("semester").Value;
-
-                //список дисциплин в семестре
-                var list = PersonalData.
-                                Root.
-                                Elements("semester").
-                                Where(sem => sem.Attribute("number").Value == semNumber);
-
-                foreach (var subject in list.Elements("subject"))
-                {
-                    subj.Add(new Subject
-                    {
-                        Name = subject.Attribute("name").Value,
-                        Hours = subject.Attribute("hours").Value,
-                        Teacher = subject.Attribute("teacher").Value
-                    });
-                }
-            }
-            catch
-            {
-                subj = null;
-            }
-
-            return subj;
-        }
-
-
         /// <summary>
         /// Читает содержимое тега
         /// </summary>
@@ -112,11 +72,10 @@ namespace Lecturer.Data.DataProcessor
         /// Создание файла личных настроек
         /// </summary>
         /// <param name="dictionary">словарь значений, которые будут записаны в файл</param>
-        public void CreateSettingsFile(Dictionary<string, string> dictionary)
+        public void CreateTestFile(Dictionary<string, string> dictionary, List<Questions> ques)
         {
             try
             {
-
                 PersonalData = new XDocument();
                 //root
                 PersonalData = new XDocument(new XElement("root", PersonalData.Root));
@@ -127,7 +86,45 @@ namespace Lecturer.Data.DataProcessor
                     for (int i = 0; i < dictionary.Count; i++)
                     {
                         SetAttribute(writer, dictionary.Keys.ElementAt(i), dictionary.Values.ElementAt(i));
+                    }                    
+                }
+
+
+                //first parent
+                using (XmlWriter writer = PersonalData.Root.CreateWriter())
+                {
+                    for (int i = 0; i < ques.Count; i++)
+                    {
+                        GenerateElement(writer, "question", "");
                     }
+                }
+
+                foreach (var q in PersonalData.Root.Elements("question"))
+                {
+                    int counter = 0;
+                    using (XmlWriter writer = q.CreateWriter())
+                    {
+                        SetAttribute(writer, "text", ques[counter].QuestionText);
+                        SetAttribute(writer, "trues", ques[counter].TrueCount.ToString());
+                    }
+
+                    using (XmlWriter writer = q.CreateWriter())
+                    {
+                        for (int i = 0; i < ques[counter].MyTest.Count; i++)
+                        {
+                            GenerateElement(writer, "ans", "");
+                        }
+                    }
+
+                    for (int i = 0; i < ques[counter].MyTest.Count; i++)
+                    {
+                        using (XmlWriter writer = q.Elements().ElementAt(i).CreateWriter())
+                        {
+                            SetAttribute(writer, "text", ques[counter].MyTest[i].Answer);
+                            SetAttribute(writer, "value", ques[counter].MyTest[i].IsTrue.ToString());
+                        }
+                    }
+                    counter += 1;
                 }
 
                 //save changes
@@ -138,55 +135,7 @@ namespace Lecturer.Data.DataProcessor
 
             }
         }
-
-
-        /// <summary>
-        /// заполняем файл с личными данными 
-        /// списком дисциплин
-        /// </summary>
-        public void FillSemester()
-        {
-            //создаем корневой элемент данного семестра
-            using (XmlWriter writer = PersonalData.Root.CreateWriter())
-            {
-                GenerateElement(writer, "semester", "");
-            }
-
-            //создаем 
-            var semester = PersonalData.Root.Elements("semester").LastOrDefault();
-            using (XmlWriter writer = semester.CreateWriter())
-            {
-                SetAttribute(writer, "number", Cource.MyCource.Semester);
-            }
-            using (XmlWriter writer = semester.CreateWriter())
-            {
-                foreach (var subj in Cource.MyCource.Subjects)
-                    GenerateElement(writer, "subject", "");
-            }
-
-
-            for (int i = 0; i < Cource.MyCource.Subjects.Count; i++)
-            {
-                var subj = Cource.MyCource.Subjects[i];
-                using (XmlWriter innerWriter = semester.Elements("subject").ElementAt(i).CreateWriter())
-                {
-                    SetAttribute(innerWriter, "name", subj.Name);
-                    SetAttribute(innerWriter, "hours", subj.Hours);
-                    SetAttribute(innerWriter, "teacher", subj.Teacher);
-                }
-            }
-            
-
-            ////TODO список дисциплин
-            //foreach (Topic topic in subj.Topics)
-            //{
-            //    GenerateElement(innerWriter, topic.Name, )
-            //            }
-
-            SaveDocument();
-        }
-
-
+        
         #endregion
 
 

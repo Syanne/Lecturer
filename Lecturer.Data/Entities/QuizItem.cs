@@ -8,5 +8,6 @@ namespace Lecturer.Data.Entities
 {
     public class QuizItem
     {
+
     }
 }

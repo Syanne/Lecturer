@@ -42,7 +42,7 @@ namespace Lecturer
                     ID = "0",
                     LectionUri = @"repo/Frikonomika.pdf",
                     IsStudied = false,
-                    Quiz = null
+                    HasTest = true
                 };
                 pdfControl.FilePath = topic.LectionUri;
             }
@@ -71,7 +71,14 @@ namespace Lecturer
                 if (acroRead != null)
                 {
                     string[] acroReadVersions = acroRead.GetSubKeyNames();
-                    return true;
+                    bool flag = false;
+                    foreach(var item in acroReadVersions)
+                    {
+                        flag = (item.Contains("11.") == true) ? true : false;
+                        if (flag == true)
+                            break;
+                    }
+                    return flag;
                 }
                 else return false;
             }
@@ -90,21 +97,20 @@ namespace Lecturer
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
-                System.Diagnostics.Process.Start("https://get.adobe.com/ru/reader/");
-            }
-            else
-            {
-
+                System.Diagnostics.Process.Start("AdobeReader11.exe");
             }
         }
 
         private void Next_Click(object sender, RoutedEventArgs e)
         {
-            if(topic.Quiz == null)
+            NavigationService nav = NavigationService.GetNavigationService(this);
+            if (topic.HasTest == false)
             {
-                NavigationService nav = NavigationService.GetNavigationService(this);
                 nav.Navigate(new Uri("CourcePage.xaml", UriKind.RelativeOrAbsolute));
-                
+            }
+            else
+            {
+                nav.Navigate(new Uri("TestPage.xaml", UriKind.RelativeOrAbsolute));
             }
         }
     }

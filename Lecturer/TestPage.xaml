@@ -5,10 +5,26 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Lecturer"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
-      Title="TestPage">
+      d:DesignHeight="300" d:DesignWidth="300">
 
-    <Grid>
-        
+
+    <Page.Resources>
+        <ResourceDictionary Source="themes/TestPageStyles.xaml"/>
+    </Page.Resources>
+
+    <Grid Background="{StaticResource GrayBackgroundBrush}">
+
+        <ScrollViewer HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Margin="10, 60"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Name="TestPanel" 
+                        Style="{StaticResource mainStackPanel}"/>
+        </ScrollViewer>
+        <Button Name="btnDone"
+                Click="btnDone_Click"
+                Content="Завершити"
+                Style="{StaticResource bottomBtnStyle}"/>
+
     </Grid>
 </Page>
