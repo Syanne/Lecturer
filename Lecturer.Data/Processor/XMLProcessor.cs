@@ -94,6 +94,49 @@ namespace Lecturer.Data.DataProcessor
             return "";
         }
 
+
+        public Quiz ReadQuizFile()
+        {
+            Quiz quiz = new Quiz();
+            try
+            {
+                //проходной балл и название
+
+                string mp = PersonalData.Root.Attribute("minPoints").Value;
+                quiz.MinPoints = Convert.ToInt32(PersonalData.Root.Attribute("minPoints").Value);
+                quiz.TestName = PersonalData.Root.Attribute("testName").Value;
+
+                //вопросы
+                quiz.Questions = new List<QuizItem>();
+                foreach(var question in PersonalData.Root.Elements("question"))
+                {
+                    //вопрос
+                    QuizItem qItem = new QuizItem();
+                    qItem.Text = question.Attribute("text").Value;
+
+                    //варианты ответа и значения
+                    qItem.Answers = new List<string>();
+                    qItem.Values = new List<string>();
+                    int counter = 0;
+                    foreach(var ans in question.Elements("ans"))
+                    {
+                        qItem.Answers.Add(ans.Attribute("text").Value);
+                        qItem.Values.Add(ans.Attribute("value").Value);
+                        if (qItem.Values.LastOrDefault().ToLower() == "true")
+                            counter += 1;
+                    }
+                    qItem.IsOneTrue = (counter > 1) ? false : true;
+                    quiz.Questions.Add(qItem);
+                    
+                }
+            }
+            catch(Exception ex)
+            {
+                quiz = null;
+            }
+
+            return quiz;
+        }
         #endregion
 
 

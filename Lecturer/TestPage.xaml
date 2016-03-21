@@ -13,7 +13,10 @@
     </Page.Resources>
 
     <Grid Background="{StaticResource GrayBackgroundBrush}">
-
+        <TextBlock Name="QuizName" FontSize="16"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top"
+                   Height="30" Margin="10"/>
         <ScrollViewer HorizontalAlignment="Center"
                       VerticalAlignment="Center"
                       Margin="10, 60"

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lecturer.Data.DataProcessor;
+using Lecturer.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,24 +35,29 @@ namespace Lecturer
         private void PrepareTest()
         {
             //mock
-            int quesInTest = 4;
-            qCount = 6;
-            minPoints = 5;
+            XMLProcessor x = new XMLProcessor("quiz.xml");
+            Quiz quiz = x.ReadQuizFile();
+
             //------
 
-            for(int i = 0; i < qCount; i++)
+            QuizName.Text = quiz.TestName;
+            for (int i = 0; i < quiz.Questions.Count; i++)
             {
                 StackPanel panel = new StackPanel();
                 TextBlock tb = new TextBlock
                 {
-                    Text = "question number " + i,
+                    Text = quiz.Questions[i].Text,
                     Style = (Style)this.Resources["tbQuestionStyle"]
                 };
                 panel.Children.Add(tb);
 
-                for(int j = 0; j< quesInTest; j++)
+                for (int j = 0; j < quiz.Questions[i].Answers.Count; j++)
                 {
-                    panel.Children.Add(CreateCheckBox("content" + j, "false"));
+                    if (quiz.Questions[i].IsOneTrue == false)
+                        panel.Children.Add(CreateCheckBox(quiz.Questions[i].Answers[j],
+                            quiz.Questions[i].Values[j]));
+                    else panel.Children.Add(CreateRadioButton(quiz.Questions[i].Answers[j],
+                            quiz.Questions[i].Values[j]));
                 }
 
                 TestPanel.Children.Add(panel);
