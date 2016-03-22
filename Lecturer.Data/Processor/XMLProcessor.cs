@@ -101,7 +101,6 @@ namespace Lecturer.Data.DataProcessor
             try
             {
                 //проходной балл и название
-
                 string mp = PersonalData.Root.Attribute("minPoints").Value;
                 quiz.MinPoints = Convert.ToInt32(PersonalData.Root.Attribute("minPoints").Value);
                 quiz.TestName = PersonalData.Root.Attribute("testName").Value;

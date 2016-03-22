@@ -22,13 +22,12 @@ namespace Lecturer
     /// </summary>
     public partial class TestPage : Page
     {
-        int minPoints;
-        int qCount;
-
+        Quiz quiz;
+        int Points;
         public TestPage()
         {
             InitializeComponent();
-
+            Points = 0;
             PrepareTest();
         }
 
@@ -36,8 +35,8 @@ namespace Lecturer
         {
             //mock
             XMLProcessor x = new XMLProcessor("quiz.xml");
-            Quiz quiz = x.ReadQuizFile();
-
+            quiz = x.ReadQuizFile();
+            
             //------
 
             QuizName.Text = quiz.TestName;
@@ -50,6 +49,7 @@ namespace Lecturer
                     Style = (Style)this.Resources["tbQuestionStyle"]
                 };
                 panel.Children.Add(tb);
+                panel.Tag = i;
 
                 for (int j = 0; j < quiz.Questions[i].Answers.Count; j++)
                 {
@@ -87,7 +87,65 @@ namespace Lecturer
 
         private void btnDone_Click(object sender, RoutedEventArgs e)
         {
+            Points = 0;
+            string message = null;
+            
+            if (quiz != null)
+                foreach (var panel in TestPanel.Children)
+                {
+                    int tag = Convert.ToInt32((panel as StackPanel).Tag);
+                    // var type = (quiz.Questions[tag].IsOneTrue == true) ? typeof(RadioButton) : typeof(CheckBox);
+                    bool flag = true;
+                    int isAllHasAnswer = 0;
 
+                    foreach (var children in (panel as StackPanel).Children)
+                    {
+                        if(children.GetType() == typeof(RadioButton))
+                        {
+                            if ((children as RadioButton).IsChecked == false)
+                                isAllHasAnswer += 1;
+
+                            if ((children as RadioButton).IsChecked == Convert.ToBoolean((children as RadioButton).Tag))
+                            {
+                                flag = true;
+                            }
+                            else
+                            {
+                                flag = false;
+                            }
+                        }
+                        else if(children.GetType() == typeof(CheckBox))
+                        {
+                            if ((children as CheckBox).IsChecked == false)
+                                isAllHasAnswer += 1;
+
+                            if ((children as CheckBox).IsChecked == Convert.ToBoolean((children as CheckBox).Tag))
+                            {
+                                flag = true;
+                            }
+                            else
+                            {
+                                flag = false;
+                            }
+                        }
+
+                    }
+                    if (isAllHasAnswer == (panel as StackPanel).Children.Count - 1)
+                    {
+                        message = "Ви відповіли не на усі питання!";
+                        break;
+                    }
+
+                        if (flag == true)
+                        Points += 1;
+                }
+            if (message == null)
+                message = String.Format("Ваш результат складає {0} з {1} \n {2}",
+                    Points.ToString(),
+                    quiz.Questions.Count,
+                    (quiz.MinPoints > Points) ? " ви не пройшли тест" : " ви пройшли тест");
+
+            MessageBox.Show(message, "Результат");
         }
     }
 }
