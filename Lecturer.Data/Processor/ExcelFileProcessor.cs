@@ -134,14 +134,18 @@ namespace Lecturer.Data.Processor
         /// <returns>список дисциплин</returns>
         public List<Subject> FillSource()
         {
+            //хранилище
             List<Subject> subj = new List<Subject>();
             DataSet ds = GetDataSet();
             try
             {
+                //единственная таблица со списком дисциплин
                 DataTable table = ds.Tables[0];
 
                 int counter = table.Rows[0].ItemArray.Count();
                 int teacherName = 0, subjectName = 0;
+
+                //ищем столбцы, в которых указаны имена преподавателей и названия дисциплин
                 for(int i = 0; i < counter; i++)
                 {
                     if (table.Rows[0][i].ToString().ToLower() == "викладач")
@@ -150,7 +154,9 @@ namespace Lecturer.Data.Processor
                         subjectName = i;
                 }
 
+                //имя таблицы - код группы
                 TableTitle = table.Rows[subjectName+2][1].ToString();
+
 
                 counter = ds.Tables[0].Rows.Count;
                 for (int i = subjectName; i < counter; i++)
@@ -158,6 +164,7 @@ namespace Lecturer.Data.Processor
                     DataRow row = table.Rows[i];
                     if (row[1].ToString() != "")
                     {
+                        //проверяем, есть ли теоретическая часть
                         string hours = (row[2].ToString() == "лк") ? row[3].ToString() : "0";
                         if (hours != "0")
                         {

@@ -34,8 +34,15 @@ namespace Lecturer.Data.Entities
         /// <summary>
         /// Текущий семестр
         /// </summary>
-        public string CourceNumber { get; set; }        
+        //public string CourceNumber { get; set; }
 
+
+        /// <summary>
+        /// Корневая папка
+        /// </summary>
+        public string RootFolderPath { get; set; }
+
+        
         /// <summary>
         /// Текущий семестр
         /// </summary>
@@ -45,6 +52,11 @@ namespace Lecturer.Data.Entities
         /// Код групи
         /// </summary>
         public string GroupName { get; set; }
+
+        /// <summary>
+        /// Специальность
+        /// </summary>
+        public string Speciality { get; set; }
 
         /// <summary>
         /// Данные об изучаемых предметах

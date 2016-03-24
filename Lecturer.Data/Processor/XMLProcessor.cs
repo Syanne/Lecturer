@@ -5,7 +5,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace Lecturer.Data.DataProcessor
+namespace Lecturer.Data.Processor
 {
     public class XMLProcessor
     {

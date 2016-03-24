@@ -26,14 +26,14 @@
                    Content="Лектор: система вивчення теоретичного матеріалу"/>
         </Grid>
         <StackPanel Orientation="Vertical"
-                    Width="230"
+                    Width="250"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
             <StackPanel Orientation="Horizontal" 
                         Style="{StaticResource StartPageSP}">
                 <Label Name="UserNameLabel" 
                        Content="Логін"
-                       Width="60" 
+                       Width="80" 
                        FontSize="14"
                        FontFamily="{StaticResource MainFontStyle}"
                        Foreground="#9b9fa8"
@@ -46,20 +46,18 @@
                          VerticalContentAlignment="Center"
                          Foreground="#303030"
                          Background="#f2f0f4" 
-                         BorderBrush="Transparent"
-                         TextChanged="UserName_TextChanged"/>
+                         BorderBrush="Transparent"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" 
                         Style="{StaticResource StartPageSP}">
                 <Label Name="PasswordLabel" 
-                       Width="60" 
+                       Width="80" 
                        FontSize="14"
                        FontFamily="{StaticResource MainFontStyle}"
                        Content="Пароль"
                        Foreground="#9b9fa8"
                        Margin="0, 5, 5, 5"/>
                 <PasswordBox Name="Password" 
-                             PasswordChanged="Password_PasswordChanged"
                              Width="140" 
                              FontSize="14"
                              VerticalContentAlignment="Center"
@@ -68,6 +66,26 @@
                              Background="#f2f0f4" 
                              Foreground="#303030"
                              BorderBrush="Transparent" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" 
+                        Style="{StaticResource StartPageSP}">
+                <Label Name="FolderLbl" 
+                       Width="80" 
+                       FontSize="14"
+                       FontFamily="{StaticResource MainFontStyle}"
+                       Content="Директорія"
+                       Foreground="#9b9fa8"
+                       Margin="0, 5, 5, 5"/>
+                <TextBox Name="Folder" 
+                         Width="140" 
+                         FontSize="14"
+                         FontFamily="{StaticResource MainFontStyle}"
+                         Margin="5, 5, 0, 5" 
+                         VerticalContentAlignment="Center"
+                         Foreground="#303030"
+                         Background="#f2f0f4" 
+                         BorderBrush="Transparent"
+                         GotFocus="Folder_GotFocus"/>
             </StackPanel>
             <Button Name="Done" 
                     Click="Done_Click" 

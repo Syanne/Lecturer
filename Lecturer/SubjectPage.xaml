@@ -3,20 +3,62 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace"
+      xmlns:local="clr-namespace:Lecturer"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300">
 
-    <Page.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="PageStyles.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Page.Resources>
+        <Page.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <ResourceDictionary Source="themes/PageStyles.xaml"/>
+                </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
+        </Page.Resources>
 
-    <Grid>
-        <Popup Margin="10,10,0,13" 
+        <Grid>
+            <Grid Style="{StaticResource TopGridPanel}">
+                <TextBlock Name="Title" 
+                       Height="40"
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Center"
+                       Opacity="0.8"
+                       Padding="10"
+                       Style="{StaticResource BasicSubjectText}"/>
+                <StackPanel Style="{StaticResource SubjectHeaderSP}" 
+                        Margin="5, 5, 5, -5" >
+                    <TextBlock Text="Назва дисципліни" 
+                           Opacity="0.7"
+                           Style="{StaticResource SubjectWideLV}"  />
+                    <TextBlock Text="Години" 
+                           Opacity="0.7"
+                           Style="{StaticResource SubjectSmallLV}" />
+                </StackPanel>
+            </Grid>
+            <ListView Name="myList" 
+                  Style="{StaticResource MainListView}"
+                  Margin="10, 80, 10, 10"
+                  SelectionChanged="myList_SelectionChanged">
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource ItemBorder}">
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="{Binding Name}" 
+                                   Style="{StaticResource SubjectWideLV}" />
+                                    <TextBlock Text="{Binding Teacher}" 
+                                           FontSize="14"
+                                           Style="{StaticResource SubjectWideLV}" />
+                                </StackPanel>
+                                <TextBlock Text="{Binding Hours}" 
+                                   Style="{StaticResource SubjectSmallLV}"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+
+                </ListView.ItemTemplate>
+            </ListView>
+            <Popup Margin="10,10,0,13" 
                Name="ActionPopup" 
                HorizontalAlignment="Center"   
                VerticalAlignment="Center" 

@@ -1,4 +1,4 @@
-﻿using Lecturer.Data.DataProcessor;
+﻿using Lecturer.Data.Processor;
 using Lecturer.Data.Entities;
 using System;
 using System.Collections.Generic;
@@ -42,6 +42,10 @@ namespace Lecturer
                 Cource.MyCource.Subjects = new List<Subject>();
                 Cource.MyCource.Semester = processor.PersonalData.Root.Attribute("semester").Value;
                 Cource.MyCource.Subjects = processor.GetSubjectList();
+                Cource.MyCource.RootFolderPath = Path.Combine(processor.PersonalData.Root.Attribute("location").Value,
+                    processor.PersonalData.Root.Attribute("speciality").Value,
+                    Cource.MyCource.Semester);
+
 
                 return true;
             }

@@ -26,7 +26,7 @@ namespace Lecturer
         }
 
 
-        private void PopupButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void PopupButton_Click(object sender, RoutedEventArgs e)
         {
             switch((sender as Button).Tag.ToString())
             {
@@ -35,6 +35,11 @@ namespace Lecturer
                 default: ActionPopup.IsOpen = false;
                     break;
             }
+        }
+
+        private void myList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

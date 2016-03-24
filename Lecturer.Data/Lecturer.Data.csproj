@@ -45,9 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Processor\DocxProcessor.cs" />
-    <Compile Include="Processor\PDFProcessor.cs" />
     <Compile Include="Processor\XMLProcessor.cs" />
-    <Compile Include="Processor\LoadDataFromServer.cs" />
+    <Compile Include="Processor\StorageProcessor.cs" />
     <Compile Include="Entities\Cource.cs" />
     <Compile Include="Entities\Person.cs" />
     <Compile Include="Entities\QuizItem.cs" />

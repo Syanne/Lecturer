@@ -1,6 +1,5 @@
-﻿using Lecturer.Data.DataProcessor;
+﻿using Lecturer.Data.Processor;
 using Lecturer.Data.Entities;
-using Lecturer.Data.Processor;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
@@ -34,22 +33,23 @@ namespace Lecturer
                 Cource.MyCource.Subjects = xProc.GetSubjectList();
             }
 
-
-
             if (Cource.MyCource.Subjects == null)
-                Cource.MyCource.Subjects = new List<Subject>() { new Subject() { Name = "Рассписание не найдено", Hours = "--" } };
-            myList.ItemsSource = Cource.MyCource.Subjects;  
-                      
-        }
-
-        
+                Cource.MyCource.Subjects = new List<Subject>()
+                {
+                    new Subject()
+                    {   Name = "Рассписание не найдено",
+                        Hours = "--"
+                    }
+                };
+            myList.ItemsSource = Cource.MyCource.Subjects;                        
+        }        
 
 
         private void myList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             myList.SelectedItem = null;
             NavigationService nav = NavigationService.GetNavigationService(this);
-            nav.Navigate(new Uri("LectionPage.xaml", UriKind.RelativeOrAbsolute));
+            nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
 
         }
     }
