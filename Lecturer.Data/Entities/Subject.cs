@@ -34,7 +34,7 @@ namespace Lecturer.Data.Entities
         /// <summary>
         /// коллекция данных о темах, изучаемых в курсе
         /// </summary>
-        public IEnumerable<Topic> Topics { get; set; }
+        public List<Topic> Topics { get; set; }
     }
     
 }

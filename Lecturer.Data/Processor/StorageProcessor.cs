@@ -1,4 +1,5 @@
 ﻿using Lecturer.Data.Entities;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -77,6 +78,36 @@ namespace Lecturer.Data.Processor
             var path = dirs.Where(file => file.Contains("xlst") || file.Contains("xls")).SingleOrDefault();
             ExcelFileProcessor fp = new ExcelFileProcessor(path, Cource.MyCource.GroupName);
             Cource.MyCource.Subjects = fp.FillSource();
+        }
+
+
+        /// <summary>
+        /// Список тем (папок с темами)
+        /// </summary>
+        /// <param name="path">путь к директории дисуиплины</param>
+        /// <returns>спиок дисциплин</returns>
+        public static List<Topic> GetTopicNames(string path)
+        {
+            string[] dirs = Directory.GetDirectories(path);
+            List<Topic> topics = new List<Topic>();
+            try
+            {
+                foreach (var directory in dirs)
+                {
+                    var str = directory.Split('\\').LastOrDefault();
+                    topics.Add(new Topic
+                    {
+                        Name = str,
+                        IsStudied = "false"
+                    });
+                }
+
+                return topics;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

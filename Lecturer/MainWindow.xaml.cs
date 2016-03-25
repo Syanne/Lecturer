@@ -43,7 +43,6 @@ namespace Lecturer
                 Cource.MyCource.Semester = processor.PersonalData.Root.Attribute("semester").Value;
                 Cource.MyCource.Subjects = processor.GetSubjectList();
                 Cource.MyCource.RootFolderPath = Path.Combine(processor.PersonalData.Root.Attribute("location").Value,
-                    processor.PersonalData.Root.Attribute("speciality").Value,
                     Cource.MyCource.Semester);
 
 

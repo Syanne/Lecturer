@@ -228,7 +228,29 @@ namespace Lecturer.Data.Processor
             SaveDocument();
         }
 
+        public void FillTopic(Subject subj)
+        {
+            foreach (var topic in subj.Topics)
+            {
+                var subject = PersonalData.Root.Elements("semester")
+                               .FirstOrDefault(elem => elem.Attribute("number").Value == Cource.MyCource.Semester)
+                               .Elements("subject")
+                               .SingleOrDefault(elem => elem.Attribute("name").Value == subj.Name);
 
+                using (XmlWriter writer = subject.CreateWriter())
+                {
+                    this.GenerateElement(writer, "topic", "");
+                }
+
+                using (XmlWriter writer = subject.Elements("topic").LastOrDefault().CreateWriter())
+                {
+                    this.SetAttribute(writer, "name", topic.Name);
+                    this.SetAttribute(writer, "isStudied", "false");
+                }
+
+                SaveDocument();
+            }
+        }
         #endregion
 
 

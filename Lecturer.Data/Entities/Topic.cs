@@ -36,7 +36,7 @@ namespace Lecturer.Data.Entities
         /// false - не изучена, предложить тестирование
         /// true - изучена, предложить доп. материал
         /// </summary>
-        public bool IsStudied { get; set; }
+        public string IsStudied { get; set; }
 
         /// <summary>
         /// есть ли тест по пройденной теме

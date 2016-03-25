@@ -42,15 +42,11 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Border Style="{StaticResource ItemBorder}">
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="{Binding Name}" 
-                                   Style="{StaticResource SubjectWideLV}" />
-                                    <TextBlock Text="{Binding Teacher}" 
-                                           FontSize="14"
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}" 
                                            Style="{StaticResource SubjectWideLV}" />
-                                </StackPanel>
-                                <TextBlock Text="{Binding Hours}" 
+                            
+                                <TextBlock Text="{Binding IsStudied}" 
                                    Style="{StaticResource SubjectSmallLV}"/>
                             </StackPanel>
                         </Border>

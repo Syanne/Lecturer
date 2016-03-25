@@ -29,7 +29,7 @@ namespace Lecturer
                     Name = "Frikonomika",
                     ID = "0",
                     LectionUri = @"repo/Frikonomika.pdf",
-                    IsStudied = false,
+                    IsStudied = "false",
                     HasTest = true
                 };
                 pdfControl.FilePath = topic.LectionUri;

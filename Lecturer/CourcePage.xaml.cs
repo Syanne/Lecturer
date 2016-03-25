@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using System.Linq;
 
 namespace Lecturer
 {
@@ -47,10 +48,52 @@ namespace Lecturer
 
         private void myList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            myList.SelectedItem = null;
-            NavigationService nav = NavigationService.GetNavigationService(this);
-            nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
+            var selectedItem = (sender as ListView).SelectedItem as Subject;
+            try
+            {
+                XMLProcessor xProc = new XMLProcessor("settings.xml");
+                selectedItem.Topics = new List<Topic>();
 
+                //ищем список тем
+                var items = xProc.PersonalData.Root.Elements("semester")
+                    .FirstOrDefault(elem => elem.Attribute("number").Value == Cource.MyCource.Semester)
+                    .Elements("subject")
+                    .SingleOrDefault(elem => elem.Attribute("name").Value == selectedItem.Name)
+                    .Elements("topic");
+
+                if (items == null || items.Count() == 0)
+                    throw new Exception();
+
+                foreach (var item in items)
+                {
+                    selectedItem.Topics.Add(new Topic
+                    {
+                        Name = item.Attribute("name").Value,
+                        IsStudied = item.Attribute("isStudied").Value
+                    });
+                }
+
+                Cource.MyCource.SelectedSubj = (sender as ListView).SelectedIndex;
+
+               // myList.SelectedIndex = -1;
+                NavigationService nav = NavigationService.GetNavigationService(this);
+                nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
+                
+            }
+            catch(Exception ex)
+            {
+                var folderPath = System.IO.Path.Combine(Cource.MyCource.RootFolderPath, selectedItem.Name);
+                selectedItem.Topics = StorageProcessor.GetTopicNames(folderPath);
+
+                XMLProcessor xProc = new XMLProcessor("settings.xml");
+                if (selectedItem.Topics != null)
+                    xProc.FillTopic(selectedItem);
+
+                Cource.MyCource.SelectedSubj = (sender as ListView).SelectedIndex;
+                //myList.SelectedItem = null;
+                NavigationService nav = NavigationService.GetNavigationService(this);
+                nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lecturer.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,8 @@ namespace Lecturer
         public SubjectPage()
         {
             InitializeComponent();
+            int index = Cource.MyCource.SelectedSubj;
+            myList.ItemsSource = Cource.MyCource.Subjects[index].Topics;
         }
 
 
