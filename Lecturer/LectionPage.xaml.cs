@@ -29,8 +29,8 @@ namespace Lecturer
                     Name = "Frikonomika",
                     ID = "0",
                     LectionUri = @"repo/Frikonomika.pdf",
-                    IsStudied = "false",
-                    HasTest = true
+                    IsStudied = false,
+                    Opacity = 0.1
                 };
                 pdfControl.FilePath = topic.LectionUri;
             }
@@ -92,7 +92,7 @@ namespace Lecturer
         private void Next_Click(object sender, RoutedEventArgs e)
         {
             NavigationService nav = NavigationService.GetNavigationService(this);
-            if (topic.HasTest == false)
+            if (topic.IsStudied == true)
             {
                 nav.Navigate(new Uri("CourcePage.xaml", UriKind.RelativeOrAbsolute));
             }

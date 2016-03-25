@@ -228,7 +228,7 @@ namespace Lecturer.Data.Processor
             SaveDocument();
         }
 
-        public void FillTopic(Subject subj)
+        public void FillTopicList(Subject subj)
         {
             foreach (var topic in subj.Topics)
             {

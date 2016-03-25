@@ -49,6 +49,8 @@ namespace Lecturer
         private void myList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selectedItem = (sender as ListView).SelectedItem as Subject;
+
+            //ищем список тем в файле 
             try
             {
                 XMLProcessor xProc = new XMLProcessor("settings.xml");
@@ -69,31 +71,36 @@ namespace Lecturer
                     selectedItem.Topics.Add(new Topic
                     {
                         Name = item.Attribute("name").Value,
-                        IsStudied = item.Attribute("isStudied").Value
+                        IsStudied = (item.Attribute("isStudied").Value.ToLower() == "false") ? false : true
                     });
-                }
-
-                Cource.MyCource.SelectedSubj = (sender as ListView).SelectedIndex;
-
-               // myList.SelectedIndex = -1;
-                NavigationService nav = NavigationService.GetNavigationService(this);
-                nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
-                
+                }                
             }
+            //иначе - в папке программы на диске
             catch(Exception ex)
             {
                 var folderPath = System.IO.Path.Combine(Cource.MyCource.RootFolderPath, selectedItem.Name);
                 selectedItem.Topics = StorageProcessor.GetTopicNames(folderPath);
 
-                XMLProcessor xProc = new XMLProcessor("settings.xml");
                 if (selectedItem.Topics != null)
-                    xProc.FillTopic(selectedItem);
-
-                Cource.MyCource.SelectedSubj = (sender as ListView).SelectedIndex;
-                //myList.SelectedItem = null;
-                NavigationService nav = NavigationService.GetNavigationService(this);
-                nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
+                {
+                    XMLProcessor xProc = new XMLProcessor("settings.xml");
+                    xProc.FillTopicList(selectedItem);
+                }
+                
             }
+            //переход на страницу дисциплины
+            finally
+            {
+                if(selectedItem.Topics != null)
+                {
+                    Cource.MyCource.SelectedSubj = (sender as ListView).SelectedIndex;
+
+                    // myList.SelectedIndex = -1;
+                    NavigationService nav = NavigationService.GetNavigationService(this);
+                    nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
+                }
+            }
+
         }
     }
 }

@@ -16,44 +16,45 @@
         </Page.Resources>
 
         <Grid>
-            <Grid Style="{StaticResource TopGridPanel}">
-                <TextBlock Name="Title" 
-                       Height="40"
-                       VerticalAlignment="Top"
-                       HorizontalAlignment="Center"
-                       Opacity="0.8"
-                       Padding="10"
-                       Style="{StaticResource BasicSubjectText}"/>
-                <StackPanel Style="{StaticResource SubjectHeaderSP}" 
+        <Grid Style="{StaticResource TopGridPanel}">
+            <StackPanel Style="{StaticResource SubjectHeaderSP}" 
                         Margin="5, 5, 5, -5" >
-                    <TextBlock Text="Назва дисципліни" 
+                    <TextBlock Text="Тема" 
                            Opacity="0.7"
                            Style="{StaticResource SubjectWideLV}"  />
-                    <TextBlock Text="Години" 
+                    <TextBlock Text="Вивчено" 
                            Opacity="0.7"
                            Style="{StaticResource SubjectSmallLV}" />
                 </StackPanel>
-            </Grid>
+            <Button Name="btnLink" 
+                    Click="btnLink_Click"
+                    Content="" 
+                    Style="{StaticResource Link}"/>
+        </Grid>
             <ListView Name="myList" 
                   Style="{StaticResource MainListView}"
                   Margin="10, 80, 10, 10"
                   SelectionChanged="myList_SelectionChanged">
 
                 <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Border Style="{StaticResource ItemBorder}">
-                        <StackPanel Orientation="Horizontal">
+                <DataTemplate>
+                    <Border Style="{StaticResource ItemBorder}" >
+                        <StackPanel Orientation="Horizontal" 
+                                    Opacity="{Binding Opacity}"  >
                             <TextBlock Text="{Binding Name}" 
-                                           Style="{StaticResource SubjectWideLV}" />
-                            
-                                <TextBlock Text="{Binding IsStudied}" 
-                                   Style="{StaticResource SubjectSmallLV}"/>
-                            </StackPanel>
-                        </Border>
-                    </DataTemplate>
+                                       Style="{StaticResource SubjectWideLV}" />
+                            <Ellipse Margin="30, 5" 
+                                     Height="20" Width="20"
+                                     Opacity="{Binding Opacity}"
+                                     Fill="{Binding CircleColor}"/>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
 
                 </ListView.ItemTemplate>
             </ListView>
+            
+            
             <Popup Margin="10,10,0,13" 
                Name="ActionPopup" 
                HorizontalAlignment="Center"   

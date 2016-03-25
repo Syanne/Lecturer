@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Markup;
+
 
 namespace Lecturer.Data.Entities
 {
@@ -20,11 +23,7 @@ namespace Lecturer.Data.Entities
         /// название темы
         /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        /// Закладка
-        /// </summary>
-        //public string Bookmark { get; set; }
+               
 
         /// <summary>
         /// Лекционный материал (html-страница)
@@ -36,11 +35,16 @@ namespace Lecturer.Data.Entities
         /// false - не изучена, предложить тестирование
         /// true - изучена, предложить доп. материал
         /// </summary>
-        public string IsStudied { get; set; }
+        public bool IsStudied { get; set; }
 
         /// <summary>
         /// есть ли тест по пройденной теме
         /// </summary>
-        public bool HasTest { get; set; }
+        public double Opacity { get; set; }
+
+        /// <summary>
+        /// Цвет кружка (изучено - зеленый, нет - красный, лекция не доступна = серый)
+        /// </summary>
+        public System.Windows.Media.Brush CircleColor { get; set; }
     }
 }

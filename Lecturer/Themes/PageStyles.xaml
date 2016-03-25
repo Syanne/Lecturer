@@ -3,6 +3,7 @@
                     xmlns:local="clr-namespace:Lecturer">
     <Brush x:Key="MainColorBrush">#26a59a</Brush>
     <Brush x:Key="GrayBackgroundBrush">#f9f9f9</Brush>
+    <Brush x:Key="RedBrush">#ce3636</Brush>
     <FontFamily x:Key="MainFontStyle">Myriad Pro</FontFamily>
 
 
@@ -112,6 +113,29 @@
         <Setter Property="Margin" Value="10"/>
     </Style>
     <!---->  
-    
+    <Style x:Key="Link" TargetType="Button">
+    <Setter Property="VerticalAlignment" Value="Top"/>
+    <Setter Property="HorizontalAlignment" Value="Left"/>
+    <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Margin" Value="10, 5"/>
+    <Setter Property="Foreground" Value="Blue"/>
+    <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="FontSize" Value="14"/>
+    <Setter Property="Template">
+        <Setter.Value>
+            <ControlTemplate TargetType="Button">
+                <TextBlock TextDecorations="Underline" 
+                           Text="{TemplateBinding Content}"
+                           FontSize="14"
+                           Background="{TemplateBinding Background}"/>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Foreground" Value="Red"/>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+        </Setter.Value>
+    </Setter>
+</Style>
     <!---->
 </ResourceDictionary>

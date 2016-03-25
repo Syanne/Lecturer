@@ -84,7 +84,7 @@ namespace Lecturer.Data.Processor
         /// <summary>
         /// Список тем (папок с темами)
         /// </summary>
-        /// <param name="path">путь к директории дисуиплины</param>
+        /// <param name="path">путь к директории дисциплины</param>
         /// <returns>спиок дисциплин</returns>
         public static List<Topic> GetTopicNames(string path)
         {
@@ -98,7 +98,7 @@ namespace Lecturer.Data.Processor
                     topics.Add(new Topic
                     {
                         Name = str,
-                        IsStudied = "false"
+                        IsStudied = false
                     });
                 }
 
