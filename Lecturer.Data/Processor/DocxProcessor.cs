@@ -3,7 +3,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lector.Data.Processor
+namespace Lecturer.Data.Processor
 {
     public class DocxProcessor
     {

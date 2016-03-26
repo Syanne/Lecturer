@@ -27,6 +27,11 @@ namespace Lecturer.Data.Entities
         public string ID { get; set; }
 
         /// <summary>
+        /// Выбранная тема
+        /// </summary>
+        public Topic SelectedTopic { get; set; }
+
+        /// <summary>
         /// Преподаватель(ли)
         /// </summary>
         public string Teacher { get; set; }

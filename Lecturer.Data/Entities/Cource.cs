@@ -59,9 +59,9 @@ namespace Lecturer.Data.Entities
         public string Speciality { get; set; }
 
         /// <summary>
-        /// Индекс выбранной дисциплины
+        /// Выбранная дисциплина
         /// </summary>
-        public int SelectedSubj { get; set; }
+        public Subject SelectedSubject { get; set; }
 
         /// <summary>
         /// Данные об изучаемых предметах

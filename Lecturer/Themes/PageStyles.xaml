@@ -86,7 +86,9 @@
     <Style TargetType="StackPanel" x:Key="StartPageSP">
         <Setter Property="Width" Value="auto"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
         <Setter Property="Margin" Value="10, 5"/>
+        <Setter Property="Height" Value="40"/>
     </Style>
 
     <Style TargetType="TextBlock" x:Key="LabelTextBlockStyle">

@@ -1,6 +1,8 @@
 ﻿using Lecturer.Data.Entities;
+using Lecturer.Data.Processor;
 using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -12,92 +14,33 @@ namespace Lecturer
     /// </summary>
     public partial class LectionPage : Page
     {
-        private bool canOpenFile;
-        Topic topic;
 
         public LectionPage()
         {
             InitializeComponent();
-            canOpenFile = CheckAcrobatInstallation();
 
-            if (canOpenFile == false)
-                ShowInstallationMessage();
-            else
-            {
-                topic = new Topic
-                {
-                    Name = "Frikonomika",
-                    ID = "0",
-                    LectionUri = @"repo/Frikonomika.pdf",
-                    IsStudied = false,
-                    Opacity = 0.1
-                };
-                pdfControl.FilePath = topic.LectionUri;
-            }
+            pdfControl.FilePath = Cource.MyCource.SelectedSubject.SelectedTopic.LectionUri;         
    
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        private bool CheckAcrobatInstallation()
-        {
-            RegistryKey adobe = Registry.LocalMachine.OpenSubKey("Software").OpenSubKey("Adobe");
-            if (null == adobe)
-            {
-                var policies = Registry.LocalMachine.OpenSubKey("Software").OpenSubKey("Policies");
-                if (null == policies)
-                {
-                    return false;
-                }
-                adobe = policies.OpenSubKey("Adobe");
-            }
-            if (adobe != null)
-            {
-                RegistryKey acroRead = adobe.OpenSubKey("Acrobat Reader");
-                if (acroRead != null)
-                {
-                    string[] acroReadVersions = acroRead.GetSubKeyNames();
-                    bool flag = false;
-                    foreach(var item in acroReadVersions)
-                    {
-                        flag = (item.Contains("11.") == true) ? true : false;
-                        if (flag == true)
-                            break;
-                    }
-                    return flag;
-                }
-                else return false;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private void ShowInstallationMessage()
-        {
-            if (MessageBox.Show(
-                "Adobe Acrobat Reader не установлен! Хотите установить программу, чтобы продолжить работу с приложением?",
-                "Adobe Acrobat Reader",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning) == MessageBoxResult.Yes)
-            {
-                System.Diagnostics.Process.Start("AdobeReader11.exe");
-            }
-        }
 
         private void Next_Click(object sender, RoutedEventArgs e)
         {
             NavigationService nav = NavigationService.GetNavigationService(this);
-            if (topic.IsStudied == true)
+            var path = StorageProcessor.GetFilePath("xml");
+            if (Cource.MyCource.SelectedSubject.SelectedTopic.IsStudied == true || path == null)
             {
-                nav.Navigate(new Uri("CourcePage.xaml", UriKind.RelativeOrAbsolute));
+
+                XMLProcessor xProc = new XMLProcessor("settings.xml");
+                xProc.SetTopicStudied();
+                Cource.MyCource.SelectedSubject.SelectedTopic.IsStudied = true;
+
+                Cource.MyCource.SelectedSubject.SelectedTopic = null;
+                nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
             }
             else
             {
+                Cource.MyCource.SelectedSubject.SelectedTopic.TestUri = path;
                 nav.Navigate(new Uri("TestPage.xaml", UriKind.RelativeOrAbsolute));
             }
         }

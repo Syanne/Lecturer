@@ -1,19 +1,11 @@
 ﻿using Lecturer.Data.Entities;
+using Lecturer.Data.Processor;
+using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace Lecturer
 {
@@ -25,11 +17,10 @@ namespace Lecturer
         public SubjectPage()
         {
             InitializeComponent();
-            int index = Cource.MyCource.SelectedSubj;
             
 
             int counter = 0;
-            foreach(var item in Cource.MyCource.Subjects[index].Topics)
+            foreach(var item in Cource.MyCource.SelectedSubject.Topics)
             {
                 if (counter < 1)
                 {
@@ -48,8 +39,8 @@ namespace Lecturer
                 else item.CircleColor = new SolidColorBrush(Colors.Gray);
             }
 
-            btnLink.Content = "< "+Cource.MyCource.Subjects[index].Name;
-            myList.ItemsSource = Cource.MyCource.Subjects[index].Topics;
+            btnLink.Content = "< "+Cource.MyCource.SelectedSubject.Name;
+            myList.ItemsSource = Cource.MyCource.SelectedSubject.Topics;
         }
 
 
@@ -66,18 +57,86 @@ namespace Lecturer
 
         private void myList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //
+            if (((sender as ListView).SelectedItem as Topic).Opacity == 1.0)
+            {
+                //проверим, установлен ли reader
+                var canOpenFile = CheckAcrobatInstallation();
+                if (canOpenFile == false)
+                    ShowInstallationMessage();
+                else
+                {
+                    Cource.MyCource.SelectedSubject.SelectedTopic = (sender as ListView).SelectedItem as Topic;
 
+                    string path = StorageProcessor.GetFilePath("pdf");
+
+                    if (path != null)
+                        Cource.MyCource.SelectedSubject.SelectedTopic.LectionUri = path;
+
+                    NavigationService nav = NavigationService.GetNavigationService(this);
+                    nav.Navigate(new Uri("LectionPage.xaml", UriKind.RelativeOrAbsolute));
+                }
+            }
         }
-
-        private void subjectList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
+        
 
         private void btnLink_Click(object sender, RoutedEventArgs e)
         {
+            Cource.MyCource.Subjects = null;
             NavigationService nav = NavigationService.GetNavigationService(this);
             nav.Navigate(new Uri("CourcePage.xaml", UriKind.RelativeOrAbsolute));
+
+        }
+        /// <summary>
+        /// Проверка наличия Adobe Reader
+        /// </summary>
+        /// <returns>true - установлен, false - нет</returns>
+        private bool CheckAcrobatInstallation()
+        {
+            RegistryKey adobe = Registry.LocalMachine.OpenSubKey("Software").OpenSubKey("Adobe");
+            if (null == adobe)
+            {
+                var policies = Registry.LocalMachine.OpenSubKey("Software").OpenSubKey("Policies");
+                if (null == policies)
+                {
+                    return false;
+                }
+                adobe = policies.OpenSubKey("Adobe");
+            }
+            if (adobe != null)
+            {
+                RegistryKey acroRead = adobe.OpenSubKey("Acrobat Reader");
+                if (acroRead != null)
+                {
+                    string[] acroReadVersions = acroRead.GetSubKeyNames();
+                    bool flag = false;
+                    foreach (var item in acroReadVersions)
+                    {
+                        flag = (item.Contains("11.") == true) ? true : false;
+                        if (flag == true)
+                            break;
+                    }
+                    return flag;
+                }
+                else return false;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Предложение установить ридер
+        /// </summary>
+        private void ShowInstallationMessage()
+        {
+            if (MessageBox.Show(
+                "Adobe Acrobat Reader не установлен! Хотите установить программу, чтобы продолжить работу с приложением?",
+                "Adobe Acrobat Reader",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            {
+                System.Diagnostics.Process.Start("AdobeReader11.exe");
+            }
         }
     }
 

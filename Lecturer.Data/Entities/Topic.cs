@@ -31,6 +31,11 @@ namespace Lecturer.Data.Entities
         public string LectionUri { get; set; }
 
         /// <summary>
+        /// Ссылка на тест
+        /// </summary>
+        public string TestUri { get; set; }
+
+        /// <summary>
         /// флаг, указывающий, изучена ли дисциплина:
         /// false - не изучена, предложить тестирование
         /// true - изучена, предложить доп. материал

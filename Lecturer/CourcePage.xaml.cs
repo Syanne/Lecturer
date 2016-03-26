@@ -93,7 +93,7 @@ namespace Lecturer
             {
                 if(selectedItem.Topics != null)
                 {
-                    Cource.MyCource.SelectedSubj = (sender as ListView).SelectedIndex;
+                    Cource.MyCource.SelectedSubject = (sender as ListView).SelectedItem as Subject;
 
                     // myList.SelectedIndex = -1;
                     NavigationService nav = NavigationService.GetNavigationService(this);

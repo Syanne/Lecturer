@@ -181,6 +181,24 @@ namespace Lecturer.Data.Processor
             }
         }
 
+        /// <summary>
+        /// Установить, что тема изучена
+        /// </summary>
+        public void SetTopicStudied()
+        {
+            string parent = Cource.MyCource.SelectedSubject.Name;
+            string name = Cource.MyCource.SelectedSubject.SelectedTopic.Name;
+
+            PersonalData.Root
+                .Elements("semester").Where(elem => elem.Attribute("number").Value == Cource.MyCource.Semester.ToString())
+                .SingleOrDefault()
+                .Elements("subject").Where(subj => subj.Attribute("name").Value == parent)
+                .SingleOrDefault()
+                .Elements("topic").Where(topic => topic.Attribute("name").Value == name)
+                .SingleOrDefault().Attribute("isStudied").Value = "true";
+
+            SaveDocument();
+        }
 
         /// <summary>
         /// заполняем файл с личными данными 

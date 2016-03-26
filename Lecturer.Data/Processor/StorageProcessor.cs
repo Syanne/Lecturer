@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Xml.Linq;
 
+
 namespace Lecturer.Data.Processor
 {
     public class StorageProcessor
@@ -80,6 +81,25 @@ namespace Lecturer.Data.Processor
             Cource.MyCource.Subjects = fp.FillSource();
         }
 
+        public static string GetFilePath(string extension)
+        {
+            try
+            {
+                var subj = Cource.MyCource.SelectedSubject;
+                string uri = Path.Combine(Cource.MyCource.RootFolderPath,
+                        //Cource.MyCource.Semester,
+                        subj.Name,
+                        subj.SelectedTopic.Name);
+
+                string[] dirs = Directory.GetFiles(uri);
+                var path = dirs.Where(file => file.Contains(extension)).SingleOrDefault();
+                return path;
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
         /// <summary>
         /// Список тем (папок с темами)
