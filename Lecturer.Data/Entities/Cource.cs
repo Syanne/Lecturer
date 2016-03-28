@@ -54,9 +54,14 @@ namespace Lecturer.Data.Entities
         public string GroupName { get; set; }
 
         /// <summary>
-        /// Специальность
+        /// Код специальности
         /// </summary>
-        public string Speciality { get; set; }
+        public string SpecialityCode { get; set; }
+
+        /// <summary>
+        /// Название специальности
+        /// </summary>
+        public string SpecialityName { get; set; }
 
         /// <summary>
         /// Выбранная дисциплина

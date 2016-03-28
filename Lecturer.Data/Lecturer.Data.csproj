@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\University.cs" />
+    <Compile Include="Entities\UserData.cs" />
     <Compile Include="Processor\DocxProcessor.cs" />
     <Compile Include="Processor\XMLProcessor.cs" />
     <Compile Include="Processor\StorageProcessor.cs" />

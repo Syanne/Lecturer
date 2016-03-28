@@ -81,19 +81,20 @@ namespace Lecturer.Data.Processor
             Cource.MyCource.Subjects = fp.FillSource();
         }
 
-        public static string GetFilePath(string extension)
+
+        /// <summary>
+        /// Поиск файла в папке темы (лекция, тест, т.п.)
+        /// </summary>
+        /// <param name="path">путь к файлу</param>
+        /// <param name="extension">расширение</param>
+        /// <returns>путь к файлу</returns>
+        public static string GetFilePath(string path, string extension)
         {
             try
             {
-                var subj = Cource.MyCource.SelectedSubject;
-                string uri = Path.Combine(Cource.MyCource.RootFolderPath,
-                        //Cource.MyCource.Semester,
-                        subj.Name,
-                        subj.SelectedTopic.Name);
-
-                string[] dirs = Directory.GetFiles(uri);
-                var path = dirs.Where(file => file.Contains(extension)).SingleOrDefault();
-                return path;
+                string[] dirs = Directory.GetFiles(path);
+                var filepath = dirs.Where(file => file.Contains(extension)).SingleOrDefault();
+                return filepath;
             }
             catch
             {
@@ -106,12 +107,12 @@ namespace Lecturer.Data.Processor
         /// </summary>
         /// <param name="path">путь к директории дисциплины</param>
         /// <returns>спиок дисциплин</returns>
-        public static List<Topic> GetTopicNames(string path)
+        public static List<Topic> GetFolderNames(string path)
         {
-            string[] dirs = Directory.GetDirectories(path);
-            List<Topic> topics = new List<Topic>();
             try
             {
+                string[] dirs = Directory.GetDirectories(path);
+                List<Topic> topics = new List<Topic>();
                 foreach (var directory in dirs)
                 {
                     var str = directory.Split('\\').LastOrDefault();

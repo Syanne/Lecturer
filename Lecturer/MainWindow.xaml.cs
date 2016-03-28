@@ -25,7 +25,7 @@ namespace Lecturer
         }
 
         /// <summary>
-        /// Загрузка персональных данных пользователя
+        /// Загрузка личных данных пользователя
         /// </summary>
         /// <returns>удалось ли загрузить файл</returns>
         private bool TryLoadUserData()
@@ -34,17 +34,11 @@ namespace Lecturer
 
             if (File.Exists("settings.xml"))
             {
-                //string username = processor.PersonalData.Root.Attribute("username").Value;
-                //string password = processor.PersonalData.Root.Attribute("password").Value;
-                //if (username == "" || password == "")
-                //    return false;
-
                 Cource.MyCource.Subjects = new List<Subject>();
                 Cource.MyCource.Semester = processor.PersonalData.Root.Attribute("semester").Value;
                 Cource.MyCource.Subjects = processor.GetSubjectList();
                 Cource.MyCource.RootFolderPath = Path.Combine(processor.PersonalData.Root.Attribute("location").Value,
-                    Cource.MyCource.Semester);
-
+                                                                processor.PersonalData.Root.Attribute("semester").Value);
 
                 return true;
             }

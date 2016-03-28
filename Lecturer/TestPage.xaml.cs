@@ -76,16 +76,17 @@ namespace Lecturer
         private void btnDone_Click(object sender, RoutedEventArgs e)
         {
             Points = 0;
-            string message = null;
+            int? isAllHasAnswer = 0;
 
-            if (quiz != null)
-                foreach (var panel in TestPanel.Children)
+            //просматриваем все вопросы
+            foreach (var panel in TestPanel.Children)
                 {
                     int tag = Convert.ToInt32((panel as StackPanel).Tag);
                     // var type = (quiz.Questions[tag].IsOneTrue == true) ? typeof(RadioButton) : typeof(CheckBox);
                     bool flag = true;
-                    int isAllHasAnswer = 0;
+                    isAllHasAnswer = 0;
 
+                //просматриваем все ответы 
                     foreach (var children in (panel as StackPanel).Children)
                     {
                         if (children.GetType() == typeof(RadioButton))
@@ -118,36 +119,43 @@ namespace Lecturer
                         }
 
                     }
-                    if (isAllHasAnswer == (panel as StackPanel).Children.Count - 1)
-                    {
-                        message = "Ви відповіли не на усі питання!";
+                //если пользователь не ответил ни на один вопрос - выбрасываем предупреждение
+                if (isAllHasAnswer == (panel as StackPanel).Children.Count - 1)
+                {
+                    isAllHasAnswer = null;
+                    if (MessageBox.Show("Ви відповіли не на усі питання!", "Результат") == MessageBoxResult.OK)
                         break;
-                    }
+                }
 
                     if (flag == true)
                         Points += 1;
                 }
-            if (message == null)
-                message = String.Format("Ваш результат складає {0} з {1} \n {2}",
+
+            //Результат прохождения теста
+            if (isAllHasAnswer != null)
+            {
+                string message = String.Format("Ваш результат складає {0} з {1} \n{2}",
                     Points.ToString(),
                     quiz.Questions.Count,
                     (quiz.MinPoints > Points) ? "Ви не пройшли тест" : "Ви пройшли тест");
 
-            if (MessageBox.Show(message, "Результат") == MessageBoxResult.OK)
-            {
-                if(quiz.MinPoints < Points)
+
+                if (MessageBox.Show(message, "Результат") == MessageBoxResult.OK)
                 {
-                    XMLProcessor xProc = new XMLProcessor("settings.xml");
-                    xProc.SetTopicStudied();
+                    if (quiz.MinPoints < Points)
+                    {
+                        XMLProcessor xProc = new XMLProcessor("settings.xml");
+                        xProc.SetTopicStudied();
 
-                    Cource.MyCource.SelectedSubject.SelectedTopic.IsStudied = true;
+                        Cource.MyCource.SelectedSubject.SelectedTopic.IsStudied = true;
+                    }
                 }
-
 
                 NavigationService nav = NavigationService.GetNavigationService(this);
                 Cource.MyCource.SelectedSubject.SelectedTopic = null;
                 nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
             }
+
         }
     }
 }

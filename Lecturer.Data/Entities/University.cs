@@ -15,6 +15,7 @@ namespace Lecturer.Data.Entities
 
     public class Speciality
     {
+        public string Code { get; set; }
         public string Name { get; set; }
         public string FolderName { get; set; }
         public List<int> Cources { get; set; }

@@ -27,14 +27,24 @@ namespace Lecturer
         private void Next_Click(object sender, RoutedEventArgs e)
         {
             NavigationService nav = NavigationService.GetNavigationService(this);
-            var path = StorageProcessor.GetFilePath("xml");
+
+            var subj = Cource.MyCource.SelectedSubject;
+            string uri = Path.Combine(Cource.MyCource.RootFolderPath,
+                    subj.Name,
+                    subj.SelectedTopic.Name);
+
+            var path = StorageProcessor.GetFilePath(uri, "xml");
             if (Cource.MyCource.SelectedSubject.SelectedTopic.IsStudied == true || path == null)
             {
-
                 XMLProcessor xProc = new XMLProcessor("settings.xml");
                 xProc.SetTopicStudied();
                 Cource.MyCource.SelectedSubject.SelectedTopic.IsStudied = true;
 
+                Cource.MyCource.SelectedSubject.SelectedTopic = null;
+                nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
+            }
+            else if(path == null)
+            {
                 Cource.MyCource.SelectedSubject.SelectedTopic = null;
                 nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
             }

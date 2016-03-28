@@ -16,8 +16,7 @@ namespace Lecturer
     {
         public SubjectPage()
         {
-            InitializeComponent();
-            
+            InitializeComponent();            
 
             int counter = 0;
             foreach(var item in Cource.MyCource.SelectedSubject.Topics)
@@ -57,28 +56,48 @@ namespace Lecturer
 
         private void myList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //
+            //если предыдущие темы изучены
             if (((sender as ListView).SelectedItem as Topic).Opacity == 1.0)
             {
                 //проверим, установлен ли reader
-                var canOpenFile = CheckAcrobatInstallation();
-                if (canOpenFile == false)
+                if (CheckAcrobatInstallation() == false)
                     ShowInstallationMessage();
                 else
                 {
                     Cource.MyCource.SelectedSubject.SelectedTopic = (sender as ListView).SelectedItem as Topic;
 
-                    string path = StorageProcessor.GetFilePath("pdf");
+
+                    var subj = Cource.MyCource.SelectedSubject;
+                    string uri = System.IO.Path.Combine(Cource.MyCource.RootFolderPath,
+                                    subj.Name,
+                                    subj.SelectedTopic.Name);
+
+                    string path = StorageProcessor.GetFilePath(uri, "pdf");
 
                     if (path != null)
+                    {
                         Cource.MyCource.SelectedSubject.SelectedTopic.LectionUri = path;
 
-                    NavigationService nav = NavigationService.GetNavigationService(this);
-                    nav.Navigate(new Uri("LectionPage.xaml", UriKind.RelativeOrAbsolute));
+                        NavigationService nav = NavigationService.GetNavigationService(this);
+                        nav.Navigate(new Uri("LectionPage.xaml", UriKind.RelativeOrAbsolute));
+                    }
+                    else
+                    {
+                       InfoMessage("Нажаль, файл із лекційним матеріалом відсутній", "Увага!");
+                    }
                 }
             }
+            else
+            {
+                InfoMessage("Ви не можете почати вивчення цієї теми, доки не вивчите попередні", "Увага!");
+            }
+            
         }
-        
+
+        private void InfoMessage(string message, string header)
+        {
+            MessageBox.Show(message, header);
+        }
 
         private void btnLink_Click(object sender, RoutedEventArgs e)
         {
@@ -103,7 +122,7 @@ namespace Lecturer
                 }
                 adobe = policies.OpenSubKey("Adobe");
             }
-            if (adobe != null)
+            else
             {
                 RegistryKey acroRead = adobe.OpenSubKey("Acrobat Reader");
                 if (acroRead != null)

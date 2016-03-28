@@ -10,16 +10,21 @@
       d:DesignHeight="300" d:DesignWidth="300">
 
     <Page.Resources>
-        <ResourceDictionary Source="themes/PageStyles.xaml"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="themes/PageStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Page.Resources>
     
     <Grid>
         <PDFControl:WpfAcrobatCtrl Name="pdfControl"
-                                   Margin="20, 10, 20, 50"
-                                   
-                                       />
-        <Button Name="Next" Width="100"
-                Height="30" 
+                                   Margin="20, 10, 20, 50"/>
+        <Button Name="Next" 
+                Style="{StaticResource bottomBtnStyle}"
+                Width="100"
+                Padding="5"
+                Height="40" 
                 VerticalAlignment="Bottom"
                 Margin="5"
                 Content="Завершити"

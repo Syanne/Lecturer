@@ -51,6 +51,7 @@ namespace Lecturer
                     Speciality sp = new Speciality
                     {
                         Name = spec.Attribute("name").Value,
+                        Code = spec.Attribute("code").Value,
                         FolderName = spec.Attribute("folder").Value,
                         Cources = new List<int>()
                     };
@@ -79,16 +80,20 @@ namespace Lecturer
             if (processor.PersonalData == null)
             {
                 Cource.MyCource.Semester = comboSemester.SelectedValue.ToString();
-                Cource.MyCource.GroupName = comboCource.SelectedValue.ToString() + " " + (comboSpec.SelectedValue as Speciality).Name;
-                Cource.MyCource.Speciality = (comboSpec.SelectedValue as Speciality).FolderName;
+                Cource.MyCource.GroupName = comboCource.SelectedValue.ToString() + " " + (comboSpec.SelectedValue as Speciality).Code;
+                Cource.MyCource.SpecialityCode = (comboSpec.SelectedValue as Speciality).FolderName;
+                Cource.MyCource.SpecialityName = (comboSpec.SelectedValue as Speciality).Name;
 
 
                 //создание файла с настройками
                 Dictionary<string, string> dictionary = new Dictionary<string, string>();
 
+                dictionary.Add("name", "");
+                dictionary.Add("surname", "");
                 dictionary.Add("semester", Cource.MyCource.Semester);
                 dictionary.Add("location", Cource.MyCource.RootFolderPath);
-                dictionary.Add("speciality", Cource.MyCource.Speciality);
+                dictionary.Add("specialityCode", Cource.MyCource.SpecialityCode);
+                dictionary.Add("specialityName", Cource.MyCource.SpecialityName);
 
                 processor.CreateSettingsFile(dictionary);
                 StorageProcessor.ProcessSchedule();

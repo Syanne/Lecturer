@@ -145,7 +145,7 @@ namespace Lecturer.Data.Processor
         /// <summary>
         /// Saves changed personal data
         /// </summary>
-        private void SaveDocument()
+        public void SaveDocument()
         {
             PersonalData.Save(Path, SaveOptions.OmitDuplicateNamespaces);
         }

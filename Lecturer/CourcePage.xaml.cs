@@ -79,7 +79,7 @@ namespace Lecturer
             catch(Exception ex)
             {
                 var folderPath = System.IO.Path.Combine(Cource.MyCource.RootFolderPath, selectedItem.Name);
-                selectedItem.Topics = StorageProcessor.GetTopicNames(folderPath);
+                selectedItem.Topics = StorageProcessor.GetFolderNames(folderPath);
 
                 if (selectedItem.Topics != null)
                 {
@@ -94,13 +94,18 @@ namespace Lecturer
                 if(selectedItem.Topics != null)
                 {
                     Cource.MyCource.SelectedSubject = (sender as ListView).SelectedItem as Subject;
-
-                    // myList.SelectedIndex = -1;
+                    
                     NavigationService nav = NavigationService.GetNavigationService(this);
                     nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
                 }
             }
 
+        }
+
+        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            NavigationService nav = NavigationService.GetNavigationService(this);
+            nav.Navigate(new Uri("UserDataPage.xaml", UriKind.RelativeOrAbsolute));
         }
     }
 }
