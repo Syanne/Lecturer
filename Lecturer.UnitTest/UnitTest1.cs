@@ -12,20 +12,29 @@ namespace Lecturer.UnitTest
         public void GetFileByFTP_Test()
         {
             //arrange
-            Institute inst = new Institute
-            {
-                Name = "ИФМИТ",
-                FolderName = "IFMIT",
-                Specialities = null
-            };
-
+            string subfolder = @"IFMIT/";
             string localPath = @"C:\Users\Anna\Documents\Лектор\";
             string[] ext = { "xls", "xlst" };
 
             //act
-            bool flag = StorageProcessor.TryGetFileByFTP(inst.FolderName + @"/", localPath, ext);
+            string path = StorageProcessor.TryGetFileByFTP(subfolder, localPath, ext);
 
             //assert
+            Assert.AreNotEqual(null, path);
+        }
+
+        [TestMethod]
+        public void ProcessZip_Test()
+        {
+            string subfolder = @"IFMIT/PI/8/";
+            string localPath = @"C:\Users\Anna\Documents\Лектор\8\";
+            string[] ext = { "zip" };
+
+            //act
+            string path = StorageProcessor.TryGetFileByFTP(subfolder, localPath, ext);
+            bool flag = StorageProcessor.ProcessZipFile(path, localPath);
+            //assert
+            Assert.AreNotEqual(null, path);
             Assert.AreEqual(true, flag);
         }
     }

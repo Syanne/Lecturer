@@ -113,7 +113,7 @@ namespace Lecturer
             var selectedIns = comboIns.SelectedItem as Institute;
             string[] ext = { "xls", "xlst" };
             string subpath = selectedIns.FolderName + @"/";
-            bool flag = StorageProcessor.TryGetFileByFTP(subpath, Cource.MyCource.RootFolderPath, ext);
+            string pathToFile = StorageProcessor.TryGetFileByFTP(subpath, Cource.MyCource.RootFolderPath, ext);
 
 
             NavigationService nav = NavigationService.GetNavigationService(this);

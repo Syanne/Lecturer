@@ -1,6 +1,7 @@
 ﻿using Lecturer.Data.Entities;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Xml.Linq;
@@ -86,9 +87,10 @@ namespace Lecturer.Data.Processor
         /// <param name="subpath">расположение на сервере (подпапки)</param>
         /// <param name="localPath">путь, по которому файл будет сохранен</param>
         /// <param name="extensions">список возможных расширений файла</param>
-        /// <returns>удалось ли скачать файл</returns>
-        public static bool TryGetFileByFTP(string subpath, string localPath, string[] extensions)
+        /// <returns>путь к файлу</returns>
+        public static string TryGetFileByFTP(string subpath, string localPath, string[] extensions)
         {
+           
             try {
 
                 string ftpAddr = uri + subpath;
@@ -120,7 +122,8 @@ namespace Lecturer.Data.Processor
                 if (response != null)
                 {
                     Stream responseStream = response.GetResponseStream();
-                    FileStream writer = new FileStream(Path.Combine(localPath, filename), FileMode.Create);
+                    string loadedFilePath = Path.Combine(localPath, filename);
+                    FileStream writer = new FileStream(loadedFilePath, FileMode.Create);
 
                     long length = response.ContentLength;
                     int bufferSize = 2048;
@@ -136,12 +139,30 @@ namespace Lecturer.Data.Processor
                     responseStream.Close();
                     response.Close();
                     writer.Close();
-                    return true;
+                    return loadedFilePath;
                 }
 
-                return false;
+                return null;
             }
             catch(System.Exception ex)
+            {
+                return null;
+            }
+        }
+
+
+        public static bool ProcessZipFile(string fullFilePath, string extractPath)
+        {
+            try
+            {
+                if (fullFilePath.Contains("zip"))
+                {
+                    ZipFile.ExtractToDirectory(fullFilePath, extractPath);
+                    return true;
+                }
+                return false;
+            }
+            catch
             {
                 return false;
             }
