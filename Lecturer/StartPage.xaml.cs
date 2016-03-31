@@ -14,11 +14,15 @@ namespace Lecturer
     /// </summary>
     public partial class StartPage : Page
     {
-        List<University> unis;
+        List<Institute> inses;
         public StartPage()
         {
             InitializeComponent();
+
+
             GetUniversityList();
+
+            
         }
 
         private void Done_Click(object sender, RoutedEventArgs e)
@@ -32,46 +36,52 @@ namespace Lecturer
 
         private void GetUniversityList()
         {
-            unis = new List<University>();
-            XMLProcessor xProc = new XMLProcessor("University.xml");
+            inses = new List<Institute>();
+            try
+            { 
+                XMLProcessor xProc = new XMLProcessor("University.xml");
 
-            //список всех институтов и факультетов
-            foreach (var item in xProc.PersonalData.Root.Elements("univertsity"))
-            {
-                University uni = new University
+                //список всех институтов и факультетов
+                foreach (var item in xProc.PersonalData.Root.Elements("univertsity"))
                 {
-                    Name = item.Attribute("name").Value,
-                    FolderName = item.Attribute("folder").Value,
-                    Specialities = new List<Speciality>()
-                };
-
-                //все специальности
-                foreach (var spec in item.Elements("speiality"))
-                {
-                    Speciality sp = new Speciality
+                    Institute ins = new Institute
                     {
-                        Name = spec.Attribute("name").Value,
-                        Code = spec.Attribute("code").Value,
-                        FolderName = spec.Attribute("folder").Value,
-                        Cources = new List<int>()
+                        Name = item.Attribute("name").Value,
+                        FolderName = item.Attribute("folder").Value,
+                        Specialities = new List<Speciality>()
                     };
 
-                    //курсы
-                    int count = Convert.ToInt32(spec.Attribute("last").Value);
-                    int start = Convert.ToInt32(spec.Attribute("first").Value);
-                    for (int i = start; i <= count; i++)
+                    //все специальности
+                    foreach (var spec in item.Elements("speiality"))
                     {
-                        sp.Cources.Add(i);
+                        Speciality sp = new Speciality
+                        {
+                            Name = spec.Attribute("name").Value,
+                            Code = spec.Attribute("code").Value,
+                            FolderName = spec.Attribute("folder").Value,
+                            Cources = new List<int>()
+                        };
+
+                        //курсы
+                        int count = Convert.ToInt32(spec.Attribute("last").Value);
+                        int start = Convert.ToInt32(spec.Attribute("first").Value);
+                        for (int i = start; i <= count; i++)
+                        {
+                            sp.Cources.Add(i);
+                        }
+
+                        ins.Specialities.Add(sp);
                     }
 
-                    uni.Specialities.Add(sp);
+                    inses.Add(ins);
                 }
 
-                unis.Add(uni);
+                comboIns.ItemsSource = inses;
             }
+            catch
+            {
 
-            comboIns.ItemsSource = unis;
-
+            }
         }
 
         private void ProcessUserFile()
@@ -99,6 +109,12 @@ namespace Lecturer
                 StorageProcessor.ProcessSchedule();
                 processor.FillSemester();
             }
+
+            var selectedIns = comboIns.SelectedItem as Institute;
+            string[] ext = { "xls", "xlst" };
+            string subpath = selectedIns.FolderName + @"/";
+            bool flag = StorageProcessor.TryGetFileByFTP(subpath, Cource.MyCource.RootFolderPath, ext);
+
 
             NavigationService nav = NavigationService.GetNavigationService(this);
             nav.Navigate(new Uri("CourcePage.xaml", UriKind.RelativeOrAbsolute));
@@ -133,7 +149,7 @@ namespace Lecturer
                 comboSemester.IsEnabled = false;
             }
 
-            comboSpec.ItemsSource = (comboIns.SelectedItem as University).Specialities;
+            comboSpec.ItemsSource = (comboIns.SelectedItem as Institute).Specialities;
             comboSpec.IsEnabled = true;
         }
 

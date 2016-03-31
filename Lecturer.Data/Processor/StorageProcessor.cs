@@ -12,8 +12,10 @@ namespace Lecturer.Data.Processor
     {
         private static XDocument doc { get; set; }
         public static string ServerPath = "D:\\FIleServer\\ИФМИТ";
+        private static string username = "2lecturer";
+        private static string password = "student12345";
+        private static string uri = "ftp://lecturer.at.ua/";
 
-        //public StorageProcessor
 
         public static string ReadFileFromServer()
         {
@@ -32,6 +34,125 @@ namespace Lecturer.Data.Processor
             return textFromFile;
         }
 
+        /// <summary>
+        /// Подготовка потока для чтения содержимого директории
+        /// </summary>
+        /// <param name="path">путь на сервере</param>
+        /// <returns>поток</returns>
+        private static StreamReader ListDirectoryOnServer(string path)
+        {
+            try
+            {
+                FtpWebRequest ftpRequest = (FtpWebRequest)WebRequest.Create(path);
+                ftpRequest.Credentials = new NetworkCredential(username, password);
+                ftpRequest.Method = WebRequestMethods.Ftp.ListDirectory;
+                FtpWebResponse response = (FtpWebResponse)ftpRequest.GetResponse();
+                StreamReader streamReader = new StreamReader(response.GetResponseStream());
+
+                return streamReader;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Подготовка потока для скачивания файла
+        /// </summary>
+        /// <param name="path">путь на сервере</param>
+        /// <returns>поток</returns>
+        private static FtpWebResponse LoadFileFromPath(string path)
+        {
+            try
+            {
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(path);
+                request.Credentials = new NetworkCredential(username, password);
+                request.UseBinary = true; // Use binary to ensure correct dlv!
+                request.Method = WebRequestMethods.Ftp.DownloadFile;
+
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+                return response;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Скачивание файла по FTP
+        /// </summary>
+        /// <param name="subpath">расположение на сервере (подпапки)</param>
+        /// <param name="localPath">путь, по которому файл будет сохранен</param>
+        /// <param name="extensions">список возможных расширений файла</param>
+        /// <returns>удалось ли скачать файл</returns>
+        public static bool TryGetFileByFTP(string subpath, string localPath, string[] extensions)
+        {
+            try {
+
+                string ftpAddr = uri + subpath;
+                string line = null;
+
+                //поиск файла с указанным расширением 
+                var fileSeek = ListDirectoryOnServer(ftpAddr);
+                string filename = null;
+                line = fileSeek.ReadLine();
+                while (!string.IsNullOrEmpty(line))
+                {
+                    for (int i = 0; i < extensions.Count(); i++)
+                        if (line.Contains(extensions[i]))
+                        {
+                            filename = line;
+                            break;
+                        }
+                    if (filename != null)
+                    {
+                        ftpAddr = ftpAddr + filename;
+                        break;
+                    }
+                    line = fileSeek.ReadLine();
+                }
+                fileSeek.Close();
+
+                //скачивание файла
+                var response = LoadFileFromPath(ftpAddr);
+                if (response != null)
+                {
+                    Stream responseStream = response.GetResponseStream();
+                    FileStream writer = new FileStream(Path.Combine(localPath, filename), FileMode.Create);
+
+                    long length = response.ContentLength;
+                    int bufferSize = 2048;
+                    int readCount;
+                    byte[] buffer = new byte[2048];
+
+                    readCount = responseStream.Read(buffer, 0, bufferSize);
+                    while (readCount > 0)
+                    {
+                        writer.Write(buffer, 0, readCount);
+                        readCount = responseStream.Read(buffer, 0, bufferSize);
+                    }
+                    responseStream.Close();
+                    response.Close();
+                    writer.Close();
+                    return true;
+                }
+
+                return false;
+            }
+            catch(System.Exception ex)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Создание папки
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="subfolder"></param>
+        /// <returns></returns>
         public static string CreateDirectory(string root, string subfolder)
         {
             var path = Path.Combine(root, subfolder);

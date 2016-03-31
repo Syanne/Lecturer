@@ -33,65 +33,10 @@ namespace Lecturer
             uData = new List<UserData>();
             xProc = new XMLProcessor("settings.xml");
 
-            PrepareUserData();
-        }
-
-        private void PrepareUserData()
-        {
-            var root = xProc.PersonalData.Root;
-
-            //имя
-            uData.Add(new UserData
-            {
-                Key = "name",
-                Value = root.Attribute("name").Value,
-                Title = "Ім'я:",
-                Tag = uData.Count,
-                CanChangeValue = Visibility.Visible
-            });
-
-            //фамилия
-            uData.Add(new UserData
-            {
-                Key = "surname",
-                Value = root.Attribute("surname").Value,
-                Title = "Прізвище:",
-                Tag = uData.Count,
-                CanChangeValue = Visibility.Visible
-            });
-
-            //спеціальність
-            uData.Add(new UserData
-            {
-                Key = "specialityName",
-                Value = root.Attribute("specialityName").Value,
-                Title = "Напрям підготовки:",
-                Tag = uData.Count,
-                CanChangeValue = Visibility.Collapsed
-            });
-
-            //семестр
-            uData.Add(new UserData
-            {
-                Key = "semester",
-                Value = root.Attribute("semester").Value,
-                Title = "Семестр:",
-                Tag = uData.Count,
-                CanChangeValue = Visibility.Visible
-            });
-
-            //розташування 
-            uData.Add(new UserData
-            {
-                Key = "location",
-                Value = root.Attribute("location").Value,
-                Title = "Розташування сховища:",
-                Tag = uData.Count,
-                CanChangeValue = Visibility.Visible
-            });
-
+            xProc.PrepareUserData(ref uData);
             lvPersonalData.ItemsSource = uData;
         }
+
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {

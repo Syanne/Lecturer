@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -94,7 +95,10 @@ namespace Lecturer.Data.Processor
             return "";
         }
 
-
+        /// <summary>
+        /// Чтение файла тестирования
+        /// </summary>
+        /// <returns>Тест</returns>
         public Quiz ReadQuizFile()
         {
             Quiz quiz = new Quiz();
@@ -135,6 +139,43 @@ namespace Lecturer.Data.Processor
             }
 
             return quiz;
+        }
+
+        /// <summary>
+        /// Чтение файла с пользовательскими данными
+        /// </summary>
+        /// <param name="uData"></param>
+        public void PrepareUserData(ref List<UserData> uData)
+        {
+            //все атрибуты корневого элемента
+            var root = PersonalData.Root.Attributes();
+
+            //определяем заголовок
+            foreach (var attrib in root)
+            {
+                string title;
+                switch (attrib.Name.ToString())
+                {
+                    case "name": title = "Ім'я:"; break;
+                    case "surname": title = "Прізвище:"; break;
+                    case "specialityName": title = "Напрям підготовки:"; break;
+                    case "semester": title = "Семестр:"; break;
+                    case "location": title = "Розташування сховища:"; break;
+                    default: title = attrib.Name.ToString(); break;
+                }
+
+                //добавляем элемент в коллекцию
+                if (title != "specialityCode")
+                    uData.Add(new UserData
+                    {
+                        Key = attrib.Name.ToString(),
+                        Value = attrib.Value,
+                        Title = title,
+                        Tag = uData.Count,
+                        CanChangeValue = (title == "specialityName") ? Visibility.Collapsed : Visibility.Visible
+                    });
+            }
+
         }
         #endregion
 
