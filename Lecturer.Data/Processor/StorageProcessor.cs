@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Xml.Linq;
 
 
@@ -12,28 +13,18 @@ namespace Lecturer.Data.Processor
     public class StorageProcessor
     {
         private static XDocument doc { get; set; }
-        public static string ServerPath = "D:\\FIleServer\\ИФМИТ";
         private static string username = "2lecturer";
         private static string password = "student12345";
         private static string uri = "ftp://lecturer.at.ua/";
 
 
-        public static string ReadFileFromServer()
+        public static string ReplaceCharacters(string uri, bool flag)
         {
-            string format = null;
-            string textFromFile = null;
-            WebRequest webRequest = HttpWebRequest.Create("https://www.dropbox.com/s/7y8b9xfyoje03vl/adr.txt?raw=1");
-            using (WebResponse webResponse = webRequest.GetResponse())
-            using (Stream stream = webResponse.GetResponseStream())
-            using (StreamReader sr = new StreamReader(stream))
-            {
-                textFromFile = sr.ReadToEnd();
-                format = Path.GetExtension(webRequest.RequestUri.ToString());
-            }
-
-
-            return textFromFile;
+            if (flag == false)
+                return uri.Replace('і', '_').Replace('І', '_');
+            else return uri.Replace('_', 'і');
         }
+        
 
         /// <summary>
         /// Подготовка потока для чтения содержимого директории
@@ -157,8 +148,11 @@ namespace Lecturer.Data.Processor
             {
                 if (fullFilePath.Contains("zip"))
                 {
-                    ZipFile.ExtractToDirectory(fullFilePath, extractPath);
+                    var enco = Encoding.GetEncoding("cp866");
+                    ZipFile.ExtractToDirectory(fullFilePath, extractPath, enco);
+                    File.Delete(fullFilePath);
                     return true;
+
                 }
                 return false;
             }
@@ -214,12 +208,13 @@ namespace Lecturer.Data.Processor
         }
 
 
-        public static void ProcessSchedule()
+        public static void ProcessSchedule(Institute selectedIns)
         {
-            string[] dirs = Directory.GetFiles(ServerPath);
-
-            var path = dirs.Where(file => file.Contains("xlst") || file.Contains("xls")).SingleOrDefault();
-            ExcelFileProcessor fp = new ExcelFileProcessor(path, Cource.MyCource.GroupName);
+            string[] ext = { "xls", "xlst" };
+            string subpath = selectedIns.FolderName + @"/";
+            string pathToFile = TryGetFileByFTP(subpath, Cource.MyCource.RootFolderPath, ext);
+            
+            ExcelFileProcessor fp = new ExcelFileProcessor(pathToFile, Cource.MyCource.GroupName);
             Cource.MyCource.Subjects = fp.FillSource();
         }
 
@@ -260,7 +255,7 @@ namespace Lecturer.Data.Processor
                     var str = directory.Split('\\').LastOrDefault();
                     topics.Add(new Topic
                     {
-                        Name = str,
+                        Name = StorageProcessor.ReplaceCharacters(str, true),
                         IsStudied = false
                     });
                 }

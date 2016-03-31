@@ -30,8 +30,8 @@ namespace Lecturer
 
             var subj = Cource.MyCource.SelectedSubject;
             string uri = Path.Combine(Cource.MyCource.RootFolderPath,
-                    subj.Name,
-                    subj.SelectedTopic.Name);
+                    StorageProcessor.ReplaceCharacters(subj.Name, false),
+                    StorageProcessor.ReplaceCharacters(subj.SelectedTopic.Name, false));
 
             var path = StorageProcessor.GetFilePath(uri, "xml");
             if (Cource.MyCource.SelectedSubject.SelectedTopic.IsStudied == true || path == null)

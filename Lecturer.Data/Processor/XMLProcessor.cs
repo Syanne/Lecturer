@@ -303,6 +303,7 @@ namespace Lecturer.Data.Processor
 
                 using (XmlWriter writer = subject.Elements("topic").LastOrDefault().CreateWriter())
                 {
+                    topic.Name = StorageProcessor.ReplaceCharacters(topic.Name, true);
                     this.SetAttribute(writer, "name", topic.Name);
                     this.SetAttribute(writer, "isStudied", "false");
                 }

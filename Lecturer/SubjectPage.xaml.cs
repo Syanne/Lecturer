@@ -69,8 +69,8 @@ namespace Lecturer
 
                     var subj = Cource.MyCource.SelectedSubject;
                     string uri = System.IO.Path.Combine(Cource.MyCource.RootFolderPath,
-                                    subj.Name,
-                                    subj.SelectedTopic.Name);
+                                    StorageProcessor.ReplaceCharacters(subj.Name, false),
+                                    StorageProcessor.ReplaceCharacters(subj.SelectedTopic.Name, false));
 
                     string path = StorageProcessor.GetFilePath(uri, "pdf");
 

@@ -106,15 +106,23 @@ namespace Lecturer
                 dictionary.Add("specialityName", Cource.MyCource.SpecialityName);
 
                 processor.CreateSettingsFile(dictionary);
-                StorageProcessor.ProcessSchedule();
+
+
+                string subfolder = (comboIns.SelectedItem as Institute).FolderName + @"/"
+                                    + Cource.MyCource.SpecialityCode + @"/"
+                                    + Cource.MyCource.Semester + @"/";
+                string[] ext = { "zip" };
+
+                //act
+                string path = StorageProcessor.TryGetFileByFTP(subfolder, Cource.MyCource.RootFolderPath, ext);
+                bool flag = StorageProcessor.ProcessZipFile(path, Cource.MyCource.RootFolderPath);
+                
+                
+                StorageProcessor.ProcessSchedule(comboIns.SelectedItem as Institute);
                 processor.FillSemester();
+                Cource.MyCource.RootFolderPath = System.IO.Path.Combine(Cource.MyCource.RootFolderPath, Cource.MyCource.Semester);
             }
-
-            var selectedIns = comboIns.SelectedItem as Institute;
-            string[] ext = { "xls", "xlst" };
-            string subpath = selectedIns.FolderName + @"/";
-            string pathToFile = StorageProcessor.TryGetFileByFTP(subpath, Cource.MyCource.RootFolderPath, ext);
-
+            
 
             NavigationService nav = NavigationService.GetNavigationService(this);
             nav.Navigate(new Uri("CourcePage.xaml", UriKind.RelativeOrAbsolute));

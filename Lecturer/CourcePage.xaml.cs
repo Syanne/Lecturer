@@ -75,18 +75,18 @@ namespace Lecturer
                     });
                 }                
             }
+
             //иначе - в папке программы на диске
             catch(Exception ex)
             {
-                var folderPath = System.IO.Path.Combine(Cource.MyCource.RootFolderPath, selectedItem.Name);
+                var folderPath = System.IO.Path.Combine(Cource.MyCource.RootFolderPath, StorageProcessor.ReplaceCharacters(selectedItem.Name, false));
                 selectedItem.Topics = StorageProcessor.GetFolderNames(folderPath);
 
                 if (selectedItem.Topics != null)
                 {
                     XMLProcessor xProc = new XMLProcessor("settings.xml");
                     xProc.FillTopicList(selectedItem);
-                }
-                
+                }                
             }
             //переход на страницу дисциплины
             finally
