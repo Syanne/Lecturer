@@ -216,6 +216,9 @@ namespace Lecturer.Data.Processor
             
             ExcelFileProcessor fp = new ExcelFileProcessor(pathToFile, Cource.MyCource.GroupName);
             Cource.MyCource.Subjects = fp.FillSource();
+
+            FileInfo fi = new FileInfo(pathToFile);
+            fi.Delete();
         }
 
 

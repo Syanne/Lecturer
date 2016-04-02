@@ -19,10 +19,7 @@ namespace Lecturer
         {
             InitializeComponent();
 
-
-            GetUniversityList();
-
-            
+            GetUniversityList();            
         }
 
         private void Done_Click(object sender, RoutedEventArgs e)
@@ -93,6 +90,7 @@ namespace Lecturer
                 Cource.MyCource.GroupName = comboCource.SelectedValue.ToString() + " " + (comboSpec.SelectedValue as Speciality).Code;
                 Cource.MyCource.SpecialityCode = (comboSpec.SelectedValue as Speciality).FolderName;
                 Cource.MyCource.SpecialityName = (comboSpec.SelectedValue as Speciality).Name;
+                Cource.MyCource.InstituteCode = (comboIns.SelectedValue as Institute).FolderName;
 
 
                 //создание файла с настройками
@@ -104,25 +102,22 @@ namespace Lecturer
                 dictionary.Add("location", Cource.MyCource.RootFolderPath);
                 dictionary.Add("specialityCode", Cource.MyCource.SpecialityCode);
                 dictionary.Add("specialityName", Cource.MyCource.SpecialityName);
+                dictionary.Add("institute", Cource.MyCource.InstituteCode);
 
                 processor.CreateSettingsFile(dictionary);
 
-
-                string subfolder = (comboIns.SelectedItem as Institute).FolderName + @"/"
-                                    + Cource.MyCource.SpecialityCode + @"/"
-                                    + Cource.MyCource.Semester + @"/";
+                //загрузка данных с сервера
+                string subfolder = Cource.MyCource.GetServerPath;
                 string[] ext = { "zip" };
-
-                //act
+                
                 string path = StorageProcessor.TryGetFileByFTP(subfolder, Cource.MyCource.RootFolderPath, ext);
                 bool flag = StorageProcessor.ProcessZipFile(path, Cource.MyCource.RootFolderPath);
                 
-                
+                //загрузка расписания с сервера
                 StorageProcessor.ProcessSchedule(comboIns.SelectedItem as Institute);
                 processor.FillSemester();
                 Cource.MyCource.RootFolderPath = System.IO.Path.Combine(Cource.MyCource.RootFolderPath, Cource.MyCource.Semester);
-            }
-            
+            }            
 
             NavigationService nav = NavigationService.GetNavigationService(this);
             nav.Navigate(new Uri("CourcePage.xaml", UriKind.RelativeOrAbsolute));

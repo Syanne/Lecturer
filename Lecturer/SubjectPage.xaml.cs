@@ -38,7 +38,7 @@ namespace Lecturer
                 else item.CircleColor = new SolidColorBrush(Colors.Gray);
             }
 
-            btnLink.Content = "< "+Cource.MyCource.SelectedSubject.Name;
+            tbTitle.Text = Cource.MyCource.SelectedSubject.Name;
             myList.ItemsSource = Cource.MyCource.SelectedSubject.Topics;
         }
 
@@ -56,41 +56,43 @@ namespace Lecturer
 
         private void myList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //если предыдущие темы изучены
-            if (((sender as ListView).SelectedItem as Topic).Opacity == 1.0)
-            {
-                //проверим, установлен ли reader
-                if (CheckAcrobatInstallation() == false)
-                    ShowInstallationMessage();
-                else
+            if (myList.SelectedItem != null)
+                //если предыдущие темы изучены
+                if (((sender as ListView).SelectedItem as Topic).Opacity == 1.0)
                 {
-                    Cource.MyCource.SelectedSubject.SelectedTopic = (sender as ListView).SelectedItem as Topic;
-
-
-                    var subj = Cource.MyCource.SelectedSubject;
-                    string uri = System.IO.Path.Combine(Cource.MyCource.RootFolderPath,
-                                    StorageProcessor.ReplaceCharacters(subj.Name, false),
-                                    StorageProcessor.ReplaceCharacters(subj.SelectedTopic.Name, false));
-
-                    string path = StorageProcessor.GetFilePath(uri, "pdf");
-
-                    if (path != null)
-                    {
-                        Cource.MyCource.SelectedSubject.SelectedTopic.LectionUri = path;
-
-                        NavigationService nav = NavigationService.GetNavigationService(this);
-                        nav.Navigate(new Uri("LectionPage.xaml", UriKind.RelativeOrAbsolute));
-                    }
+                    //проверим, установлен ли reader
+                    if (CheckAcrobatInstallation() == false)
+                        ShowInstallationMessage();
                     else
                     {
-                       InfoMessage("Нажаль, файл із лекційним матеріалом відсутній", "Увага!");
+                        //иначе - загружаем файл
+                        Cource.MyCource.SelectedSubject.SelectedTopic = (sender as ListView).SelectedItem as Topic;
+
+                        var subj = Cource.MyCource.SelectedSubject;
+                        string uri = System.IO.Path.Combine(Cource.MyCource.RootFolderPath,
+                                        StorageProcessor.ReplaceCharacters(subj.Name, false),
+                                        StorageProcessor.ReplaceCharacters(subj.SelectedTopic.Name, false));
+
+                        string path = StorageProcessor.GetFilePath(uri, "pdf");
+
+                        if (path != null)
+                        {
+                            Cource.MyCource.SelectedSubject.SelectedTopic.LectionUri = path;
+
+                            NavigationService nav = NavigationService.GetNavigationService(this);
+                            nav.Navigate(new Uri("LectionPage.xaml", UriKind.RelativeOrAbsolute));
+                        }
+                        else
+                        {
+                            InfoMessage("Нажаль, файл із лекційним матеріалом відсутній", "Увага!");
+                        }
                     }
                 }
-            }
-            else
-            {
-                InfoMessage("Ви не можете почати вивчення цієї теми, доки не вивчите попередні", "Увага!");
-            }
+                else
+                {
+                    InfoMessage("Ви не можете почати вивчення цієї теми, доки не вивчите попередні", "Увага!");
+                    myList.SelectedItem = null;
+                }
             
         }
 

@@ -161,11 +161,12 @@ namespace Lecturer.Data.Processor
                     case "specialityName": title = "Напрям підготовки:"; break;
                     case "semester": title = "Семестр:"; break;
                     case "location": title = "Розташування сховища:"; break;
-                    default: title = attrib.Name.ToString(); break;
+                    default: title = null; break;
                 }
 
                 //добавляем элемент в коллекцию
-                if (title != "specialityCode")
+                if (title != null)
+                {
                     uData.Add(new UserData
                     {
                         Key = attrib.Name.ToString(),
@@ -174,6 +175,7 @@ namespace Lecturer.Data.Processor
                         Tag = uData.Count,
                         CanChangeValue = (title == "specialityName") ? Visibility.Collapsed : Visibility.Visible
                     });
+                }
             }
 
         }
@@ -181,8 +183,6 @@ namespace Lecturer.Data.Processor
 
 
         #region запись
-
-
         /// <summary>
         /// Saves changed personal data
         /// </summary>

@@ -48,58 +48,64 @@ namespace Lecturer
 
         private void myList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedItem = (sender as ListView).SelectedItem as Subject;
-
-            //ищем список тем в файле 
-            try
+            if (myList.SelectedItem != null)
             {
-                XMLProcessor xProc = new XMLProcessor("settings.xml");
-                selectedItem.Topics = new List<Topic>();
+                var selectedItem = (sender as ListView).SelectedItem as Subject;
 
-                //ищем список тем
-                var items = xProc.PersonalData.Root.Elements("semester")
-                    .FirstOrDefault(elem => elem.Attribute("number").Value == Cource.MyCource.Semester)
-                    .Elements("subject")
-                    .SingleOrDefault(elem => elem.Attribute("name").Value == selectedItem.Name)
-                    .Elements("topic");
-
-                if (items == null || items.Count() == 0)
-                    throw new Exception();
-
-                foreach (var item in items)
-                {
-                    selectedItem.Topics.Add(new Topic
-                    {
-                        Name = item.Attribute("name").Value,
-                        IsStudied = (item.Attribute("isStudied").Value.ToLower() == "false") ? false : true
-                    });
-                }                
-            }
-
-            //иначе - в папке программы на диске
-            catch(Exception ex)
-            {
-                var folderPath = System.IO.Path.Combine(Cource.MyCource.RootFolderPath, StorageProcessor.ReplaceCharacters(selectedItem.Name, false));
-                selectedItem.Topics = StorageProcessor.GetFolderNames(folderPath);
-
-                if (selectedItem.Topics != null)
+                //ищем список тем в файле 
+                try
                 {
                     XMLProcessor xProc = new XMLProcessor("settings.xml");
-                    xProc.FillTopicList(selectedItem);
-                }                
-            }
-            //переход на страницу дисциплины
-            finally
-            {
-                if(selectedItem.Topics != null)
+                    selectedItem.Topics = new List<Topic>();
+
+                    //ищем список тем
+                    var items = xProc.PersonalData.Root.Elements("semester")
+                        .FirstOrDefault(elem => elem.Attribute("number").Value == Cource.MyCource.Semester)
+                        .Elements("subject")
+                        .SingleOrDefault(elem => elem.Attribute("name").Value == selectedItem.Name)
+                        .Elements("topic");
+
+                    if (items == null || items.Count() == 0)
+                        throw new Exception();
+
+                    foreach (var item in items)
+                    {
+                        selectedItem.Topics.Add(new Topic
+                        {
+                            Name = item.Attribute("name").Value,
+                            IsStudied = (item.Attribute("isStudied").Value.ToLower() == "false") ? false : true
+                        });
+                    }
+                }
+
+                //иначе - в папке программы на диске
+                catch (Exception ex)
                 {
-                    Cource.MyCource.SelectedSubject = (sender as ListView).SelectedItem as Subject;
-                    
-                    NavigationService nav = NavigationService.GetNavigationService(this);
-                    nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
+                    var folderPath = System.IO.Path.Combine(Cource.MyCource.RootFolderPath, StorageProcessor.ReplaceCharacters(selectedItem.Name, false));
+                    selectedItem.Topics = StorageProcessor.GetFolderNames(folderPath);
+
+                    if (selectedItem.Topics != null)
+                    {
+                        XMLProcessor xProc = new XMLProcessor("settings.xml");
+                        xProc.FillTopicList(selectedItem);
+                    }
+                }
+                //переход на страницу дисциплины
+                finally
+                {
+                    if (selectedItem.Topics != null)
+                    {
+                        Cource.MyCource.SelectedSubject = (sender as ListView).SelectedItem as Subject;
+
+                        NavigationService nav = NavigationService.GetNavigationService(this);
+                        nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
+                    }
+                    else
+                    {
+                        myList.SelectedItem = null;
+                    }
                 }
             }
-
         }
 
         private void Button_Click(object sender, System.Windows.RoutedEventArgs e)

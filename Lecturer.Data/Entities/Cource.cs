@@ -32,13 +32,26 @@ namespace Lecturer.Data.Entities
         }
 
         /// <summary>
-        /// Текущий семестр
+        /// Возвращает путь к файлу с данными на сервере
         /// </summary>
-        //public string CourceNumber { get; set; }
+        public string GetServerPath
+        {
+            get
+            {
+                return InstituteCode + @"/"
+                       + SpecialityCode + @"/"
+                       + Semester + @"/";
+            }
+        }
+
+        /// <summary>
+        /// Код института
+        /// </summary>
+        public string InstituteCode { get; set; }
 
 
         /// <summary>
-        /// Корневая папка
+        /// Корневая папка на локальном диске
         /// </summary>
         public string RootFolderPath { get; set; }
 

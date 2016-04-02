@@ -1,0 +1,44 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Lecturer.Data.Processor
+{
+    public class CryptoProcessor
+    {
+        private static string key = "<RSAKeyValue><Modulus>p0E8A/6qB4NGUj8NdALuKeBo5RsYezkTbt6bG3895sHXiFq9BwvwprMP9Ue61mpNpitSjDBG77QS/Ctmc0jOTy/+UTzBTLacMq3n51z5s7eGUMxY+fzfsmih6Ncl/DrGpfh+FhRzxTjtsWmOBNxoV6Dwy+BpsGaoBgBkUzeqZ70=</Modulus><Exponent>AQAB</Exponent><P>1ZsjX4Rzuhz8mX6u5BiAci6kbGYPyKLd5N4hpybHkCZYGHxd2eQr4gRH7Gp/2dBNojvDzjRD7peHRCaUkpdjsQ==</P><Q>yHMXmNtNrnuqEL146cQDi9cVgPlMqQjTo5elEmBe6FfY777Tu5yMWBgaa+4x3bFzu3nBeNvB39RUZovVWiyDzQ==</Q><DP>ZxKdVxIK5dvm6AqBSf+ou3BWVxhItYAhoratdoL3+U8HY4lfoCzCICYArswVNX2WeJpuOapuvUrRMsmLF9GFgQ==</DP><DQ>EUydhLuogJ57luZDQSmBhNgTKwZY712rpjq4LFXU2wh52HcHnvFry06JOTddZlyiOFPRtrSAjuisQA1hZF7jIQ==</DQ><InverseQ>bt6Lgljo/F9ANVnALPrds/kEy7x7VJxYYYhc626brHqmQtKZKh5kvaWblQT4A0gyfxTFFi1MMsAztdYgzuVgtg==</InverseQ><D>A9ymf1wdvnMqSENi8uMPb0GagnHD+LJqb7Stpa6kNgQTTzdzJmrA6YR4cZwwpPtK5DObYhfKR4YjqxVwdeiANPvR7J2zF+WbANxj1pY+IQg6PyGSZ3AbqQqEElyXOo3UIPkcPkztHUdz+0ylK9COD3mpcHmhf6You3yDkWS0mlE=</D></RSAKeyValue>";
+        private static Encoding enco = Encoding.GetEncoding("cp866");
+
+        public static string Encrypt(string data)
+        {
+            byte[] encContent;
+            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+
+            rsa.FromXmlString(key);
+            encContent = rsa.Encrypt(ToByteArray(data), true);
+            return ToString(encContent);
+        }
+        
+        public static string Decrypt(string data)
+        {
+            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+            rsa.FromXmlString(key);
+            var decryptedData = rsa.Decrypt(ToByteArray(data), true);
+
+            return ToString(decryptedData);
+        }
+
+        private static string ToString(byte[] data)
+        {
+            return enco.GetString(data);
+        }
+
+        private static byte[] ToByteArray(string data)
+        {
+            return enco.GetBytes(data);
+        }
+    }
+}
