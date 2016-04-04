@@ -24,6 +24,7 @@ namespace Lecturer
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
+            loadingGrid.Visibility = Visibility.Visible;
             if (comboSemester.SelectedIndex != -1 && Folder.Text != "")
             {
                 ProcessUserFile();
@@ -81,7 +82,7 @@ namespace Lecturer
             }
         }
 
-        private void ProcessUserFile()
+        private async void ProcessUserFile()
         {
             XMLProcessor processor = new XMLProcessor("settings.xml");
             if (processor.PersonalData == null)
@@ -91,6 +92,7 @@ namespace Lecturer
                 Cource.MyCource.SpecialityCode = (comboSpec.SelectedValue as Speciality).FolderName;
                 Cource.MyCource.SpecialityName = (comboSpec.SelectedValue as Speciality).Name;
                 Cource.MyCource.InstituteCode = (comboIns.SelectedValue as Institute).FolderName;
+                Cource.MyCource.CourceNumber = comboCource.SelectedValue.ToString();
 
 
                 //создание файла с настройками
@@ -98,25 +100,19 @@ namespace Lecturer
 
                 dictionary.Add("name", "");
                 dictionary.Add("surname", "");
-                dictionary.Add("semester", Cource.MyCource.Semester);
                 dictionary.Add("location", Cource.MyCource.RootFolderPath);
+                dictionary.Add("institute", Cource.MyCource.InstituteCode);
                 dictionary.Add("specialityCode", Cource.MyCource.SpecialityCode);
                 dictionary.Add("specialityName", Cource.MyCource.SpecialityName);
-                dictionary.Add("institute", Cource.MyCource.InstituteCode);
+                dictionary.Add("courceNumber", Cource.MyCource.CourceNumber);
+                dictionary.Add("semester", Cource.MyCource.Semester);
+
+
+
+                await StorageProcessor.GetSemesterFilesAsync();
 
                 processor.CreateSettingsFile(dictionary);
-
-                //загрузка данных с сервера
-                string subfolder = Cource.MyCource.GetServerPath;
-                string[] ext = { "zip" };
-                
-                string path = StorageProcessor.TryGetFileByFTP(subfolder, Cource.MyCource.RootFolderPath, ext);
-                bool flag = StorageProcessor.ProcessZipFile(path, Cource.MyCource.RootFolderPath);
-                
-                //загрузка расписания с сервера
-                StorageProcessor.ProcessSchedule(comboIns.SelectedItem as Institute);
-                processor.FillSemester();
-                Cource.MyCource.RootFolderPath = System.IO.Path.Combine(Cource.MyCource.RootFolderPath, Cource.MyCource.Semester);
+                processor.WriteSemester();
             }            
 
             NavigationService nav = NavigationService.GetNavigationService(this);

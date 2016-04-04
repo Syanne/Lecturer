@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:gif="http://wpfanimatedgif.codeplex.com"
       xmlns:local="clr-namespace:Lecturer"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
@@ -198,6 +199,19 @@
                     Foreground="#ffffff"
                     Width="auto" Height="35"
                     Margin="10, 180, 10, 10"/>
+        </Grid>
+
+        <Grid Name="loadingGrid" 
+              Visibility="Hidden"
+              Background="#99DBDBDB" 
+              Margin="0, 80, 0, 0"
+              Height="auto" Width="auto"
+              HorizontalAlignment="Stretch" 
+              VerticalAlignment="Stretch">
+            <Image Height="100" Width="100"
+                   Margin="0, 0, 0, 80"
+                   gif:ImageBehavior.RepeatBehavior="Forever"
+                   gif:ImageBehavior.AnimatedSource="Assets/301.gif"/>
         </Grid>
     </Grid>
 </Page>

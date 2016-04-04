@@ -29,7 +29,8 @@ namespace Lecturer
             NavigationService nav = NavigationService.GetNavigationService(this);
 
             var subj = Cource.MyCource.SelectedSubject;
-            string uri = Path.Combine(Cource.MyCource.RootFolderPath,
+            string uri = Path.Combine(Cource.MyCource.RootFolderPath, 
+                    Cource.MyCource.Semester,
                     StorageProcessor.ReplaceCharacters(subj.Name, false),
                     StorageProcessor.ReplaceCharacters(subj.SelectedTopic.Name, false));
 

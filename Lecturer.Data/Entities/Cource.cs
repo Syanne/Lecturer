@@ -55,7 +55,11 @@ namespace Lecturer.Data.Entities
         /// </summary>
         public string RootFolderPath { get; set; }
 
-        
+        /// <summary>
+        /// курс
+        /// </summary>
+        public string CourceNumber { get; set; }
+
         /// <summary>
         /// Текущий семестр
         /// </summary>

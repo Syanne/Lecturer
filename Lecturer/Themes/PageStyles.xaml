@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:Lecturer">
-    <Brush x:Key="MainColorBrush">#26a59a</Brush>
+    <Brush x:Key="MainColorBrush">#26a577</Brush>
     <Brush x:Key="GrayBackgroundBrush">#f9f9f9</Brush>
     <Brush x:Key="RedBrush">#ce3636</Brush>
     <FontFamily x:Key="MainFontStyle">Myriad Pro</FontFamily>

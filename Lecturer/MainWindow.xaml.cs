@@ -31,17 +31,18 @@ namespace Lecturer
         private bool TryLoadUserData()
         {
             XMLProcessor processor = new XMLProcessor("settings.xml");
-            var root = processor.PersonalData.Root;
             if (File.Exists("settings.xml"))
             {
+                var root = processor.PersonalData.Root;
+
                 Cource.MyCource.Subjects = new List<Subject>();
                 Cource.MyCource.Semester = root.Attribute("semester").Value;
+                Cource.MyCource.CourceNumber = root.Attribute("courceNumber").Value;
                 Cource.MyCource.Subjects = processor.GetSubjectList();
                 Cource.MyCource.InstituteCode = root.Attribute("institute").Value;
                 Cource.MyCource.SpecialityCode = root.Attribute("specialityCode").Value;
                 Cource.MyCource.SpecialityName = root.Attribute("specialityName").Value;
-                Cource.MyCource.RootFolderPath = Path.Combine(root.Attribute("location").Value,
-                                                               root.Attribute("semester").Value);
+                Cource.MyCource.RootFolderPath = Path.Combine(root.Attribute("location").Value);
 
                 return true;
             }

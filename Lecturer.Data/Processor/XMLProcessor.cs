@@ -44,14 +44,11 @@ namespace Lecturer.Data.Processor
 
             try
             {
-                //текущий семестр
-                string semNumber = PersonalData.Root.Attribute("semester").Value;
-
                 //список дисциплин в семестре
                 var list = PersonalData.
                                 Root.
                                 Elements("semester").
-                                Where(sem => sem.Attribute("number").Value == semNumber);
+                                Where(sem => sem.Attribute("number").Value == Cource.MyCource.Semester);
 
                 foreach (var subject in list.Elements("subject"))
                 {
@@ -159,7 +156,7 @@ namespace Lecturer.Data.Processor
                     case "name": title = "Ім'я:"; break;
                     case "surname": title = "Прізвище:"; break;
                     case "specialityName": title = "Напрям підготовки:"; break;
-                    case "semester": title = "Семестр:"; break;
+                    case "courceNumber": title = "Курс:"; break;
                     case "location": title = "Розташування сховища:"; break;
                     default: title = null; break;
                 }
@@ -245,46 +242,50 @@ namespace Lecturer.Data.Processor
         /// заполняем файл с личными данными 
         /// списком дисциплин
         /// </summary>
-        public void FillSemester()
+        public void WriteSemester()
         {
-            //создаем корневой элемент данного семестра
-            using (XmlWriter writer = PersonalData.Root.CreateWriter())
-            {
-                GenerateElement(writer, "semester", "");
-            }
+            var elements = PersonalData.Root.Elements("semester").Where(sem => sem.Attribute("number").Value == Cource.MyCource.Semester);
 
-            //создаем 
-            var semester = PersonalData.Root.Elements("semester").LastOrDefault();
-            using (XmlWriter writer = semester.CreateWriter())
+            if (elements.Count() == 0)
             {
-                SetAttribute(writer, "number", Cource.MyCource.Semester);
-            }
-            using (XmlWriter writer = semester.CreateWriter())
-            {
-                foreach (var subj in Cource.MyCource.Subjects)
-                    GenerateElement(writer, "subject", "");
-            }
-
-
-            for (int i = 0; i < Cource.MyCource.Subjects.Count; i++)
-            {
-                var subj = Cource.MyCource.Subjects[i];
-                using (XmlWriter innerWriter = semester.Elements("subject").ElementAt(i).CreateWriter())
+                PersonalData.Root.Attribute("semester").Value = Cource.MyCource.Semester;
+                PersonalData.Root.Attribute("courceNumber").Value = Cource.MyCource.CourceNumber;
+                //создаем корневой элемент данного семестра
+                using (XmlWriter writer = PersonalData.Root.CreateWriter())
                 {
-                    SetAttribute(innerWriter, "name", subj.Name);
-                    SetAttribute(innerWriter, "hours", subj.Hours);
-                    SetAttribute(innerWriter, "teacher", subj.Teacher);
+                    GenerateElement(writer, "semester", "");
                 }
+
+                //создаем 
+                var semester = PersonalData.Root.Elements("semester").LastOrDefault();
+                using (XmlWriter writer = semester.CreateWriter())
+                {
+                    SetAttribute(writer, "number", Cource.MyCource.Semester);
+                }
+                if (Cource.MyCource.Subjects != null)
+                {
+                    using (XmlWriter writer = semester.CreateWriter())
+                    {
+                        foreach (var subj in Cource.MyCource.Subjects)
+                            GenerateElement(writer, "subject", "");
+                    }
+
+
+                    for (int i = 0; i < Cource.MyCource.Subjects.Count; i++)
+                    {
+                        var subj = Cource.MyCource.Subjects[i];
+                        using (XmlWriter innerWriter = semester.Elements("subject").ElementAt(i).CreateWriter())
+                        {
+                            SetAttribute(innerWriter, "name", subj.Name);
+                            SetAttribute(innerWriter, "hours", subj.Hours);
+                            SetAttribute(innerWriter, "teacher", subj.Teacher);
+                        }
+                    }
+
+                }
+
+                SaveDocument();
             }
-            
-
-            ////TODO список дисциплин
-            //foreach (Topic topic in subj.Topics)
-            //{
-            //    GenerateElement(innerWriter, topic.Name, )
-            //            }
-
-            SaveDocument();
         }
 
         public void FillTopicList(Subject subj)

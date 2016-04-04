@@ -47,24 +47,23 @@ namespace Lecturer
             {
                 if (inputDialog.ShowDialog() == true)
                 {
+
                     if (inputDialog.Answer != "" && inputDialog.Answer != instance.Value)
                     {
                         //строковые данные
-                        if (instance.Key != "semester")
+                        if (instance.Key != "courceNumber")
                         {
-                            ProcessAction(inputDialog.Answer);
+                            WriteDataIntoFile(inputDialog.Answer);
                         }
                         //числовые данные - семестр
                         else
                         {
                             try
                             {
-                                if (Convert.ToInt32(inputDialog.Answer) < 12)
+                                int courceValue = Convert.ToInt32(inputDialog.Answer);
+                                if (courceValue <= 5)
                                 {
-                                    ProcessAction(inputDialog.Answer);
-
-                                    XMLProcessor processor = new XMLProcessor("settings.xml");
-                                    Cource.MyCource.Subjects = processor.GetSubjectList();
+                                    LoadFilesFromServer(courceValue);
                                 }
                             }
                             catch
@@ -85,12 +84,16 @@ namespace Lecturer
                 // Show the FolderBrowserDialog
                 System.Windows.Forms.DialogResult result = folderDlg.ShowDialog();
                 if (result == System.Windows.Forms.DialogResult.OK)
-                {                    
+                {       
+                    //копирование директории и содержимого,
+                    //затем - удаление директории и старого расположения             
                     CopyDirectory(instance.Value, System.IO.Path.Combine(folderDlg.SelectedPath, "Лектор"));
                     DirectoryInfo dir = new DirectoryInfo(instance.Value);
                     dir.Delete(true);
-                    Cource.MyCource.RootFolderPath = System.IO.Path.Combine(folderDlg.SelectedPath, "Лектор", Cource.MyCource.Semester);
-                    ProcessAction(System.IO.Path.Combine(folderDlg.SelectedPath, "Лектор"));
+
+                    //меняем путь к директории
+                    Cource.MyCource.RootFolderPath = System.IO.Path.Combine(folderDlg.SelectedPath, "Лектор");
+                    WriteDataIntoFile(System.IO.Path.Combine(folderDlg.SelectedPath, "Лектор"));
 
                     instance.Value = System.IO.Path.Combine(folderDlg.SelectedPath, "Лектор");
                 }                
@@ -98,16 +101,49 @@ namespace Lecturer
         }
 
         /// <summary>
+        /// Подготовка к загрузке данных 
+        /// </summary>
+        /// <param name="courceValue">номер курса</param>
+        /// <param name="answer"></param>
+        private async void LoadFilesFromServer(int courceValue)
+        {
+            loadingGrid.Visibility = Visibility.Visible;
+            Cource.MyCource.CourceNumber = courceValue.ToString();
+
+            //проверяем текущий семестр (летние месяцы не относятся ни к одному из них)
+            int semester = 0;
+            if (DateTime.Now.Month > 1 && DateTime.Now.Month <= 5)
+                semester = courceValue * 2;
+            else if (DateTime.Now.Month >= 9)
+                semester = courceValue * 2 - 1;
+
+            //сохраняем данные в файл с настройками и загружаем данные с сервера
+            if (semester != 0)
+            {
+                Cource.MyCource.Semester = semester.ToString();
+
+                WriteDataIntoFile(courceValue.ToString());
+
+                //асинхронная загрузка данных с сервера
+                await StorageProcessor.GetSemesterFilesAsync();
+
+                xProc.WriteSemester();
+                Cource.MyCource.Subjects = xProc.GetSubjectList();
+            }
+                loadingGrid.Visibility = Visibility.Hidden;
+        }
+
+        /// <summary>
         /// Изменение файла с данными
         /// </summary>
-        /// <param name="answer">измененное значение</param>
-        private void ProcessAction(string answer)
+        /// <param name="changedValue">измененное значение</param>
+        private void WriteDataIntoFile(string changedValue)
         {
             var root = xProc.PersonalData.Root;
 
-            root.Attribute(uData[SelectedIndex].Key).Value = answer;
+            root.Attribute(uData[SelectedIndex].Key).Value = changedValue;
             xProc.SaveDocument();
-            uData[SelectedIndex].Value = answer;
+            uData[SelectedIndex].Value = changedValue;
 
             lvPersonalData.ItemsSource = null;
             lvPersonalData.ItemsSource = uData;
@@ -120,25 +156,25 @@ namespace Lecturer
         /// <param name="targetFolder">путь, по которому будет скопирована папка</param>
         private void CopyDirectory(string startFolder, string targetFolder)
         {
-            //Берём нашу исходную папку
+            //исхдная директория
             DirectoryInfo dir_inf = new DirectoryInfo(startFolder);
-            //Перебираем все внутренние папки
+
+            //перебор вложенных папок
             foreach (DirectoryInfo dir in dir_inf.GetDirectories())
             {
-                //Проверяем - если директории не существует, то создаём;
                 if (Directory.Exists(targetFolder + "\\" + dir.Name) != true)
                 {
                     Directory.CreateDirectory(targetFolder + "\\" + dir.Name);
                 }
 
-                //Рекурсия (перебираем вложенные папки и делаем для них то-же самое).
+                //перебор всех вложенных файлов и папок
                 CopyDirectory(dir.FullName, targetFolder + "\\" + dir.Name);
             }
 
-            //Перебираем файлы в источнике.
+            //файлы в папке
             foreach (string file in Directory.GetFiles(startFolder))
             {
-                //Оотделяем имя файла с расширением - без пути (но с слешем "\").
+                //имя файла без пути
                 string fileWithoutPath = file.Substring(file.LastIndexOf('\\'), file.Length - file.LastIndexOf('\\'));
 
                 //Копируем файл с перезаписью из источника в приёмник.

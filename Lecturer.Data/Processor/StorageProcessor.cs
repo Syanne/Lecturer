@@ -1,10 +1,12 @@
 ﻿using Lecturer.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 
@@ -70,6 +72,25 @@ namespace Lecturer.Data.Processor
             {
                 return null;
             }
+        }
+
+        public static Task GetSemesterFilesAsync()
+        {
+            return Task.Run(() =>
+            {
+                //загрузка данных с сервера
+                string[] ext = { "zip" };
+
+                var folder = new DirectoryInfo(Path.Combine(Cource.MyCource.RootFolderPath, Cource.MyCource.Semester));
+                if (!folder.Exists)
+                {
+                    string path = TryGetFileByFTP(Cource.MyCource.GetServerPath, Cource.MyCource.RootFolderPath, ext);
+                    bool flag = ProcessZipFile(path, Cource.MyCource.RootFolderPath);
+
+                    //загрузка расписания с сервера
+                    ProcessSchedule(Cource.MyCource.InstituteCode);
+                }
+            });
         }
 
         /// <summary>
@@ -156,7 +177,7 @@ namespace Lecturer.Data.Processor
                 }
                 return false;
             }
-            catch
+            catch(Exception ex)
             {
                 return false;
             }
@@ -208,10 +229,10 @@ namespace Lecturer.Data.Processor
         }
 
 
-        public static void ProcessSchedule(Institute selectedIns)
+        public static void ProcessSchedule(string instituteCode)
         {
             string[] ext = { "xls", "xlst" };
-            string subpath = selectedIns.FolderName + @"/";
+            string subpath = instituteCode + @"/";
             string pathToFile = TryGetFileByFTP(subpath, Cource.MyCource.RootFolderPath, ext);
             
             ExcelFileProcessor fp = new ExcelFileProcessor(pathToFile, Cource.MyCource.GroupName);

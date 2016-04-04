@@ -70,6 +70,7 @@ namespace Lecturer
 
                         var subj = Cource.MyCource.SelectedSubject;
                         string uri = System.IO.Path.Combine(Cource.MyCource.RootFolderPath,
+                                        Cource.MyCource.Semester,
                                         StorageProcessor.ReplaceCharacters(subj.Name, false),
                                         StorageProcessor.ReplaceCharacters(subj.SelectedTopic.Name, false));
 
