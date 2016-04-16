@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Lecturer.Data.Processor
+namespace Lecturer.TestCreator
 {
     public class CryptoProcessor
     {
@@ -19,26 +16,34 @@ namespace Lecturer.Data.Processor
 
             rsa.FromXmlString(key);
             encContent = rsa.Encrypt(ToByteArray(data), true);
-            return ToString(encContent);
+            return Convert.ToBase64String(encContent);
         }
-        
+
         public static string Decrypt(string data)
         {
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
-            rsa.FromXmlString(key);
-            var decryptedData = rsa.Decrypt(ToByteArray(data), true);
+            try
+            {
+                RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+                rsa.FromXmlString(key);
+                var decryptedData = rsa.Decrypt(Convert.FromBase64String(data), true);
 
-            return ToString(decryptedData);
+                return ToString(decryptedData);
+            }
+            catch
+            {
+                return data;
+            }
         }
+
 
         private static string ToString(byte[] data)
         {
-            return enco.GetString(data);
+            return Encoding.UTF8.GetString(data);
         }
 
         private static byte[] ToByteArray(string data)
         {
-            return enco.GetBytes(data);
+            return Encoding.UTF8.GetBytes(data);
         }
     }
 }

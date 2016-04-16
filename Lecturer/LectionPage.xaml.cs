@@ -14,41 +14,37 @@ namespace Lecturer
     /// </summary>
     public partial class LectionPage : Page
     {
-
         public LectionPage()
         {
             InitializeComponent();
 
-            pdfControl.FilePath = Cource.MyCource.SelectedSubject.SelectedTopic.LectionUri;         
+            pdfControl.Filepath = Cource.MyCource.SelectedSubject.SelectedTopic.LectionUri;         
    
         }
-
 
         private void Next_Click(object sender, RoutedEventArgs e)
         {
             NavigationService nav = NavigationService.GetNavigationService(this);
-
-            var subj = Cource.MyCource.SelectedSubject;
+            
             string uri = Path.Combine(Cource.MyCource.RootFolderPath, 
                     Cource.MyCource.Semester,
-                    StorageProcessor.ReplaceCharacters(subj.Name, false),
-                    StorageProcessor.ReplaceCharacters(subj.SelectedTopic.Name, false));
+                    StorageProcessor.ReplaceCharacters(Cource.MyCource.SelectedSubject.Name, false),
+                    StorageProcessor.ReplaceCharacters(Cource.MyCource.SelectedSubject.SelectedTopic.Name, false));
 
             var path = StorageProcessor.GetFilePath(uri, "xml");
+            //файл с тестом не найден
             if (Cource.MyCource.SelectedSubject.SelectedTopic.IsStudied == true || path == null)
             {
                 XMLProcessor xProc = new XMLProcessor("settings.xml");
                 xProc.SetTopicStudied();
-                Cource.MyCource.SelectedSubject.SelectedTopic.IsStudied = true;
 
+                Cource.MyCource.SelectedSubject.SelectedTopic.IsStudied = true;
                 Cource.MyCource.SelectedSubject.SelectedTopic = null;
+
                 nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
             }
-            else if(path == null)
-            {
-                Cource.MyCource.SelectedSubject.SelectedTopic = null;
-                nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
-            }
+
+            //переход на страницу тестирования
             else
             {
                 Cource.MyCource.SelectedSubject.SelectedTopic.TestUri = path;

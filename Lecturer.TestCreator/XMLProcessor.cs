@@ -85,7 +85,7 @@ namespace Lecturer.TestCreator
                 {
                     for (int i = 0; i < dictionary.Count; i++)
                     {
-                        SetAttribute(writer, dictionary.Keys.ElementAt(i), dictionary.Values.ElementAt(i));
+                        SetAttribute(writer, dictionary.Keys.ElementAt(i), CryptoProcessor.Encrypt(dictionary.Values.ElementAt(i)));
                     }                    
                 }
 
@@ -104,8 +104,8 @@ namespace Lecturer.TestCreator
                     int counter = 0;
                     using (XmlWriter writer = q.CreateWriter())
                     {
-                        SetAttribute(writer, "text", ques[counter].QuestionText);
-                        SetAttribute(writer, "trues", ques[counter].TrueCount.ToString());
+                        SetAttribute(writer, "text", CryptoProcessor.Encrypt(ques[counter].QuestionText));
+                        SetAttribute(writer, "trues", CryptoProcessor.Encrypt(ques[counter].TrueCount.ToString()));
                     }
 
                     using (XmlWriter writer = q.CreateWriter())
@@ -120,8 +120,8 @@ namespace Lecturer.TestCreator
                     {
                         using (XmlWriter writer = q.Elements().ElementAt(i).CreateWriter())
                         {
-                            SetAttribute(writer, "text", ques[counter].MyTest[i].Answer);
-                            SetAttribute(writer, "value", ques[counter].MyTest[i].IsTrue.ToString());
+                            SetAttribute(writer, "text", CryptoProcessor.Encrypt(ques[counter].MyTest[i].Answer));
+                            SetAttribute(writer, "value", CryptoProcessor.Encrypt(ques[counter].MyTest[i].IsTrue.ToString()));
                         }
                     }
                     counter += 1;

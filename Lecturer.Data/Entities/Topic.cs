@@ -14,10 +14,6 @@ namespace Lecturer.Data.Entities
     /// </summary>
     public class Topic
     {
-        /// <summary>
-        /// идентификатор темы
-        /// </summary>
-        public string ID { get; set; }
 
         /// <summary>
         /// название темы

@@ -25,7 +25,7 @@ namespace Lecturer.PDFControl
 
 
         private string _filePath = string.Empty;
-        private PdfControl _customAcrobatCtrl;
+        private PdfControl CustomAcrobatCtrl;
 
 
         private static void FilePathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -37,12 +37,12 @@ namespace Lecturer.PDFControl
         public WpfAcrobatCtrl()
         {
             InitializeComponent();
-            _customAcrobatCtrl = new PdfControl();
-            wpfWindowsFormsHostCtrl.Child = _customAcrobatCtrl;
+            CustomAcrobatCtrl = new PdfControl();
+            wpfWindowsFormsHostCtrl.Child = CustomAcrobatCtrl;
 
         }
 
-        public string FilePath
+        public string Filepath
         {
             get
             {
@@ -58,7 +58,7 @@ namespace Lecturer.PDFControl
         private void FilePathChanged(string oldFilePath, string newFilePath)
         {
             _filePath = newFilePath;
-            _customAcrobatCtrl.LoadFile(_filePath);
+            CustomAcrobatCtrl.LoadFile(_filePath);
         }
     }
 }

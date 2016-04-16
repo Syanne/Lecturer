@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lecturer.Data.Entities
 {
-    public class Institute
+    public class Department
     {
         public string Name { get; set; }
         public string FolderName { get; set; }

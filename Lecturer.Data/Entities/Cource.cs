@@ -34,7 +34,7 @@ namespace Lecturer.Data.Entities
         /// <summary>
         /// Возвращает путь к файлу с данными на сервере
         /// </summary>
-        public string GetServerPath
+        public string GetServerSubpath
         {
             get
             {

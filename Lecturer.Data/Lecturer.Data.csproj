@@ -47,14 +47,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\University.cs" />
+    <Compile Include="Entities\Department.cs" />
     <Compile Include="Entities\UserData.cs" />
     <Compile Include="Processor\CryptoProcessor.cs" />
-    <Compile Include="Processor\DocxProcessor.cs" />
     <Compile Include="Processor\XMLProcessor.cs" />
     <Compile Include="Processor\StorageProcessor.cs" />
     <Compile Include="Entities\Cource.cs" />
-    <Compile Include="Entities\Person.cs" />
     <Compile Include="Entities\QuizItem.cs" />
     <Compile Include="Entities\Subject.cs" />
     <Compile Include="Entities\Topic.cs" />

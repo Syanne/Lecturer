@@ -1,4 +1,5 @@
 ﻿using Lecturer.Data.Entities;
+using Lecturer.TestCreator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,10 @@ namespace Lecturer.Data.Processor
     public class XMLProcessor
     {
         private string Path { get; set; }
-        public XDocument PersonalData { get; set; }
+        public XDocument XFile { get; set; }
 
         /// <summary>
-        /// Конструктор
+        /// Конструктор, загружающий xml-файл
         /// </summary>
         /// <param name="pathString">путь к файлу</param>
         public XMLProcessor(string pathString)
@@ -23,14 +24,38 @@ namespace Lecturer.Data.Processor
 
             try
             {
-                PersonalData = XDocument.Load(Path);
+                XFile = XDocument.Load(Path);
             }
             catch
             {
-                PersonalData = null;
+                XFile = null;
             }
         }
         
+        /// <summary>
+        /// загрузка файла настроек с инициализацией сущности Cource
+        /// </summary>
+        public XMLProcessor()
+        {
+            try
+            {
+                XFile = XDocument.Load("settings.xml");
+                var root = XFile.Root;
+
+                Cource.MyCource.Subjects = new List<Subject>();
+                Cource.MyCource.Semester = root.Attribute("semester").Value;
+                Cource.MyCource.CourceNumber = root.Attribute("courceNumber").Value;
+                Cource.MyCource.Subjects = GetSubjectList();
+                Cource.MyCource.InstituteCode = root.Attribute("institute").Value;
+                Cource.MyCource.SpecialityCode = root.Attribute("specialityCode").Value;
+                Cource.MyCource.SpecialityName = root.Attribute("specialityName").Value;
+                Cource.MyCource.RootFolderPath = System.IO.Path.Combine(root.Attribute("location").Value);
+            }
+            catch
+            {
+                XFile = null;
+            }
+        }
 
         #region чтение
         /// <summary>
@@ -40,16 +65,18 @@ namespace Lecturer.Data.Processor
         /// <returns></returns>
         public List<Subject> GetSubjectList()
         {
-            List<Subject> subj = new List<Subject>();
 
             try
             {
+                List<Subject> subj = new List<Subject>();
+
                 //список дисциплин в семестре
-                var list = PersonalData.
+                var list = XFile.
                                 Root.
                                 Elements("semester").
                                 Where(sem => sem.Attribute("number").Value == Cource.MyCource.Semester);
 
+                //заполняем список дисциплин
                 foreach (var subject in list.Elements("subject"))
                 {
                     subj.Add(new Subject
@@ -59,41 +86,54 @@ namespace Lecturer.Data.Processor
                         Teacher = subject.Attribute("teacher").Value
                     });
                 }
+
+                return subj;
             }
             catch
             {
-                subj = null;
+                return null;
             }
-
-            return subj;
+            
         }
 
-
         /// <summary>
-        /// Читает содержимое тега
+        /// Ием список тем в файле
         /// </summary>
-        /// <param name="isRootParent">является корневой элемент единственным предком</param>
-        /// <param name="parent">родительский тег</param>
-        /// <param name="key">тег, значение которого нужно прочесть</param>
-        /// <returns>значение</returns>
-        public string ReadAttributeValue(XElement element, string key)
+        /// <param name="subjectName">Название дисциплины</param>
+        /// <returns>список тем</returns>
+        public List<Topic> GetTopicList(string subjectName)
         {
-            //try
-            //{
-            //    if (isRootParent == true)
-            //        return PersonalData.Root.Element(key).Value;
-            //    else
-            //        return PersonalData.Root.Element(parent).Element(key).Value;
-            //}
-            //catch
-            //{
-            //    return "";
-            //}
-            return "";
-        }
+            try {
+                List<Topic> topics = new List<Topic>();
+                var items = XFile.Root.Elements("semester")
+                            .FirstOrDefault(elem => elem.Attribute("number").Value == Cource.MyCource.Semester)
+                            .Elements("subject")
+                            .SingleOrDefault(elem => elem.Attribute("name").Value == subjectName)
+                            .Elements("topic");
+
+                if (items == null || items.Count() == 0)
+                    throw new Exception();
+
+                foreach (var item in items)
+                {
+                    topics.Add(new Topic
+                    {
+                        Name = item.Attribute("name").Value,
+                        IsStudied = (item.Attribute("isStudied").Value.ToLower() == "false") ? false : true
+                    });
+                }
+
+                return topics;
+            }
+            catch
+            {
+                return null;
+            }
+            }
+        
 
         /// <summary>
-        /// Чтение файла тестирования
+        /// Чтение и расшифровка файла тестирования
         /// </summary>
         /// <returns>Тест</returns>
         public Quiz ReadQuizFile()
@@ -102,26 +142,27 @@ namespace Lecturer.Data.Processor
             try
             {
                 //проходной балл и название
-                string mp = PersonalData.Root.Attribute("minPoints").Value;
-                quiz.MinPoints = Convert.ToInt32(PersonalData.Root.Attribute("minPoints").Value);
-                quiz.TestName = PersonalData.Root.Attribute("testName").Value;
+                string mp = CryptoProcessor.Decrypt(XFile.Root.Attribute("minPoints").Value);
+                quiz.MinPoints = Convert.ToInt32(CryptoProcessor.Decrypt(XFile.Root.Attribute("minPoints").Value));
+                quiz.TestName = CryptoProcessor.Decrypt(XFile.Root.Attribute("testName").Value);
 
                 //вопросы
                 quiz.Questions = new List<QuizItem>();
-                foreach(var question in PersonalData.Root.Elements("question"))
+                foreach(var question in XFile.Root.Elements("question"))
                 {
                     //вопрос
                     QuizItem qItem = new QuizItem();
-                    qItem.Text = question.Attribute("text").Value;
+                    qItem.Text = CryptoProcessor.Decrypt(question.Attribute("text").Value);
 
                     //варианты ответа и значения
                     qItem.Answers = new List<string>();
                     qItem.Values = new List<string>();
                     int counter = 0;
+
                     foreach(var ans in question.Elements("ans"))
                     {
-                        qItem.Answers.Add(ans.Attribute("text").Value);
-                        qItem.Values.Add(ans.Attribute("value").Value);
+                        qItem.Answers.Add(CryptoProcessor.Decrypt(ans.Attribute("text").Value));
+                        qItem.Values.Add(CryptoProcessor.Decrypt(ans.Attribute("value").Value));
                         if (qItem.Values.LastOrDefault().ToLower() == "true")
                             counter += 1;
                     }
@@ -145,7 +186,7 @@ namespace Lecturer.Data.Processor
         public void PrepareUserData(ref List<UserData> uData)
         {
             //все атрибуты корневого элемента
-            var root = PersonalData.Root.Attributes();
+            var root = XFile.Root.Attributes();
 
             //определяем заголовок
             foreach (var attrib in root)
@@ -185,7 +226,7 @@ namespace Lecturer.Data.Processor
         /// </summary>
         public void SaveDocument()
         {
-            PersonalData.Save(Path, SaveOptions.OmitDuplicateNamespaces);
+            XFile.Save(Path, SaveOptions.OmitDuplicateNamespaces);
         }
 
         /// <summary>
@@ -197,16 +238,16 @@ namespace Lecturer.Data.Processor
             try
             {
 
-                PersonalData = new XDocument();
+                XFile = new XDocument();
                 //root
-                PersonalData = new XDocument(new XElement("root", PersonalData.Root));
+                XFile = new XDocument(new XElement("root", XFile.Root));
                 
                 //first parent
-                using (XmlWriter writer = PersonalData.Root.CreateWriter())
+                using (XmlWriter writer = XFile.Root.CreateWriter())
                 {
                     for (int i = 0; i < dictionary.Count; i++)
                     {
-                        SetAttribute(writer, dictionary.Keys.ElementAt(i), dictionary.Values.ElementAt(i));
+                        GenerateAttribute(writer, dictionary.Keys.ElementAt(i), dictionary.Values.ElementAt(i));
                     }
                 }
 
@@ -227,7 +268,7 @@ namespace Lecturer.Data.Processor
             string parent = Cource.MyCource.SelectedSubject.Name;
             string name = Cource.MyCource.SelectedSubject.SelectedTopic.Name;
 
-            PersonalData.Root
+            XFile.Root
                 .Elements("semester").Where(elem => elem.Attribute("number").Value == Cource.MyCource.Semester.ToString())
                 .SingleOrDefault()
                 .Elements("subject").Where(subj => subj.Attribute("name").Value == parent)
@@ -244,23 +285,23 @@ namespace Lecturer.Data.Processor
         /// </summary>
         public void WriteSemester()
         {
-            var elements = PersonalData.Root.Elements("semester").Where(sem => sem.Attribute("number").Value == Cource.MyCource.Semester);
+            var elements = XFile.Root.Elements("semester").Where(sem => sem.Attribute("number").Value == Cource.MyCource.Semester);
 
             if (elements.Count() == 0)
             {
-                PersonalData.Root.Attribute("semester").Value = Cource.MyCource.Semester;
-                PersonalData.Root.Attribute("courceNumber").Value = Cource.MyCource.CourceNumber;
+                XFile.Root.Attribute("semester").Value = Cource.MyCource.Semester;
+                XFile.Root.Attribute("courceNumber").Value = Cource.MyCource.CourceNumber;
                 //создаем корневой элемент данного семестра
-                using (XmlWriter writer = PersonalData.Root.CreateWriter())
+                using (XmlWriter writer = XFile.Root.CreateWriter())
                 {
                     GenerateElement(writer, "semester", "");
                 }
 
                 //создаем 
-                var semester = PersonalData.Root.Elements("semester").LastOrDefault();
+                var semester = XFile.Root.Elements("semester").LastOrDefault();
                 using (XmlWriter writer = semester.CreateWriter())
                 {
-                    SetAttribute(writer, "number", Cource.MyCource.Semester);
+                    GenerateAttribute(writer, "number", Cource.MyCource.Semester);
                 }
                 if (Cource.MyCource.Subjects != null)
                 {
@@ -276,9 +317,9 @@ namespace Lecturer.Data.Processor
                         var subj = Cource.MyCource.Subjects[i];
                         using (XmlWriter innerWriter = semester.Elements("subject").ElementAt(i).CreateWriter())
                         {
-                            SetAttribute(innerWriter, "name", subj.Name);
-                            SetAttribute(innerWriter, "hours", subj.Hours);
-                            SetAttribute(innerWriter, "teacher", subj.Teacher);
+                            GenerateAttribute(innerWriter, "name", subj.Name);
+                            GenerateAttribute(innerWriter, "hours", subj.Hours);
+                            GenerateAttribute(innerWriter, "teacher", subj.Teacher);
                         }
                     }
 
@@ -288,15 +329,21 @@ namespace Lecturer.Data.Processor
             }
         }
 
+        /// <summary>
+        /// Сохранение списка тем в файл
+        /// </summary>
+        /// <param name="subj">сущность-дисциплина</param>
         public void FillTopicList(Subject subj)
         {
             foreach (var topic in subj.Topics)
             {
-                var subject = PersonalData.Root.Elements("semester")
+                //ищем дисциплину
+                var subject = XFile.Root.Elements("semester")
                                .FirstOrDefault(elem => elem.Attribute("number").Value == Cource.MyCource.Semester)
                                .Elements("subject")
                                .SingleOrDefault(elem => elem.Attribute("name").Value == subj.Name);
 
+                //запись в файл
                 using (XmlWriter writer = subject.CreateWriter())
                 {
                     this.GenerateElement(writer, "topic", "");
@@ -305,10 +352,11 @@ namespace Lecturer.Data.Processor
                 using (XmlWriter writer = subject.Elements("topic").LastOrDefault().CreateWriter())
                 {
                     topic.Name = StorageProcessor.ReplaceCharacters(topic.Name, true);
-                    this.SetAttribute(writer, "name", topic.Name);
-                    this.SetAttribute(writer, "isStudied", "false");
+                    this.GenerateAttribute(writer, "name", topic.Name);
+                    this.GenerateAttribute(writer, "isStudied", "false");
                 }
 
+                //сохранение документа
                 SaveDocument();
             }
         }
@@ -316,7 +364,6 @@ namespace Lecturer.Data.Processor
 
 
         #region обработка элементов
-
         /// <summary>
         /// Генерация тега и его содержимого
         /// </summary>
@@ -331,61 +378,19 @@ namespace Lecturer.Data.Processor
         }
 
 
-
         /// <summary>
         /// Добавление аттрибута
         /// </summary>
         /// <param name="writer">Поток</param>
         /// <param name="key">название аттрибута</param>
         /// <param name="value">значение аттрибута</param>
-        private void SetAttribute(XmlWriter writer, string key, string value)
+        private void GenerateAttribute(XmlWriter writer, string key, string value)
         {
             writer.WriteStartAttribute(key);
             writer.WriteString(value);
             writer.WriteEndAttribute();
         }
-
-
-        /// <summary>
-        /// Изменяет содержимое элемента
-        /// </summary>
-        /// <param name="newValue">новое значение</param>
-        public void EditValue(XElement element, string newValue)
-        {
-            try
-            {
-                element.Value = newValue;
-
-                SaveDocument();
-            }
-            catch
-            {
-            }
-        }
-
-
-        /// <summary>
-        /// Удаление элемента
-        /// </summary>
-        /// <param name="isRootParent">является корневой элемент единственным предком</param>
-        /// <param name="parent">родительский тег</param>
-        /// <param name="key">тег, который нужно удалить</param>
-        public void RemoveElement(XElement parent, string key, string value)
-        {
-            try
-            {
-                parent.Elements(key).Where(elem => elem.Value == value).Remove();
-
-                SaveDocument();
-            }
-            catch
-            {
-            }
-        }
-
+        
         #endregion
-
-
     }
-
 }

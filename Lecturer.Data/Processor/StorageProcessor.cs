@@ -7,19 +7,23 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 
 namespace Lecturer.Data.Processor
 {
     public class StorageProcessor
     {
-        private static XDocument doc { get; set; }
-        private static string username = "2lecturer";
-        private static string password = "student12345";
-        private static string uri = "ftp://lecturer.at.ua/";
+        private const string username = "2lecturer";
+        private const string password = "student12345";
+        private const string uri = "ftp://lecturer.at.ua/";
 
 
+        /// <summary>
+        /// Замена символов
+        /// </summary>
+        /// <param name="uri">адрес папки</param>
+        /// <param name="flag">флаг вида замены</param>
+        /// <returns>измененная строка</returns>
         public static string ReplaceCharacters(string uri, bool flag)
         {
             if (flag == false)
@@ -33,7 +37,7 @@ namespace Lecturer.Data.Processor
         /// </summary>
         /// <param name="path">путь на сервере</param>
         /// <returns>поток</returns>
-        private static StreamReader ListDirectoryOnServer(string path)
+        private static StreamReader ListDirectoriesOnServer(string path)
         {
             try
             {
@@ -74,18 +78,22 @@ namespace Lecturer.Data.Processor
             }
         }
 
+        /// <summary>
+        /// асинхронная загрузка данных с сервера
+        /// </summary>
+        /// <returns>выполняемая операция</returns>
         public static Task GetSemesterFilesAsync()
         {
             return Task.Run(() =>
             {
-                //загрузка данных с сервера
-                string[] ext = { "zip" };
 
                 var folder = new DirectoryInfo(Path.Combine(Cource.MyCource.RootFolderPath, Cource.MyCource.Semester));
                 if (!folder.Exists)
                 {
-                    string path = TryGetFileByFTP(Cource.MyCource.GetServerPath, Cource.MyCource.RootFolderPath, ext);
-                    bool flag = ProcessZipFile(path, Cource.MyCource.RootFolderPath);
+                    //загрузка данных с сервера
+                    string[] ext = { "zip" };
+                    string filename = TryGetFileByFTP(Cource.MyCource.GetServerSubpath, Cource.MyCource.RootFolderPath, ext);
+                    bool flag = ProcessZipFile(filename, Cource.MyCource.RootFolderPath);
 
                     //загрузка расписания с сервера
                     ProcessSchedule(Cource.MyCource.InstituteCode);
@@ -102,14 +110,13 @@ namespace Lecturer.Data.Processor
         /// <returns>путь к файлу</returns>
         public static string TryGetFileByFTP(string subpath, string localPath, string[] extensions)
         {
-           
             try {
 
                 string ftpAddr = uri + subpath;
                 string line = null;
 
                 //поиск файла с указанным расширением 
-                var fileSeek = ListDirectoryOnServer(ftpAddr);
+                var fileSeek = ListDirectoriesOnServer(ftpAddr);
                 string filename = null;
                 line = fileSeek.ReadLine();
                 while (!string.IsNullOrEmpty(line))
@@ -134,8 +141,7 @@ namespace Lecturer.Data.Processor
                 if (response != null)
                 {
                     Stream responseStream = response.GetResponseStream();
-                    string loadedFilePath = Path.Combine(localPath, filename);
-                    FileStream writer = new FileStream(loadedFilePath, FileMode.Create);
+                    FileStream writer = new FileStream(Path.Combine(localPath, filename), FileMode.Create);
 
                     long length = response.ContentLength;
                     int bufferSize = 2048;
@@ -151,33 +157,39 @@ namespace Lecturer.Data.Processor
                     responseStream.Close();
                     response.Close();
                     writer.Close();
-                    return loadedFilePath;
+                    return filename;
                 }
 
                 return null;
             }
-            catch(System.Exception ex)
+            catch
             {
                 return null;
             }
         }
 
-
-        public static bool ProcessZipFile(string fullFilePath, string extractPath)
+        /// <summary>
+        /// обработка zip-архива
+        /// </summary>
+        /// <param name="filename">путь к файлу, включая название и расширение</param>
+        /// <param name="extractPath">путь, по которому архив будет извлечен</param>
+        /// <returns></returns>
+        public static bool ProcessZipFile(string filename, string extractPath)
         {
             try
             {
-                if (fullFilePath.Contains("zip"))
+                if (filename.Contains("zip"))
                 {
+                    var filepath = Path.Combine(Cource.MyCource.RootFolderPath, filename);
                     var enco = Encoding.GetEncoding("cp866");
-                    ZipFile.ExtractToDirectory(fullFilePath, extractPath, enco);
-                    File.Delete(fullFilePath);
+                    ZipFile.ExtractToDirectory(filepath, extractPath, enco);
+                    File.Delete(filepath);
                     return true;
 
                 }
                 return false;
             }
-            catch(Exception ex)
+            catch
             {
                 return false;
             }
@@ -186,8 +198,8 @@ namespace Lecturer.Data.Processor
         /// <summary>
         /// Создание папки
         /// </summary>
-        /// <param name="root"></param>
-        /// <param name="subfolder"></param>
+        /// <param name="root">корневая папка для создаваемой</param>
+        /// <param name="subfolder">название создаваемой папки</param>
         /// <returns></returns>
         public static string CreateDirectory(string root, string subfolder)
         {
@@ -197,11 +209,6 @@ namespace Lecturer.Data.Processor
                 if (!Directory.Exists(path))
                 {
                     DirectoryInfo di = Directory.CreateDirectory(path);
-                    //Console.WriteLine("The directory was created successfully at {0}.", Directory.GetCreationTime(path));
-
-                    // Delete the directory.
-                    //di.Delete();
-                    //Console.WriteLine("The directory was deleted successfully.");
                 }
                 return path;
             }
@@ -211,33 +218,23 @@ namespace Lecturer.Data.Processor
             }
 
         }
-
-        public static string LoadFile(string loadPath, string savePath)
+        
+        /// <summary>
+        /// Обработка файла с расписанием (списком дисциплин)
+        /// </summary>
+        /// <param name="instituteCode">код института/факультета</param>
+        private static void ProcessSchedule(string instituteCode)
         {
-            try
-            {
-                string filepath;
-
-
-
-                return "";
-            }
-            catch
-            {
-                return "";
-            }
-        }
-
-
-        public static void ProcessSchedule(string instituteCode)
-        {
+            //скачивание
             string[] ext = { "xls", "xlst" };
             string subpath = instituteCode + @"/";
             string pathToFile = TryGetFileByFTP(subpath, Cource.MyCource.RootFolderPath, ext);
             
+            //разбор и сохранение данных локально
             ExcelFileProcessor fp = new ExcelFileProcessor(pathToFile, Cource.MyCource.GroupName);
             Cource.MyCource.Subjects = fp.FillSource();
 
+            //удаление
             FileInfo fi = new FileInfo(pathToFile);
             fi.Delete();
         }
@@ -267,7 +264,7 @@ namespace Lecturer.Data.Processor
         /// Список тем (папок с темами)
         /// </summary>
         /// <param name="path">путь к директории дисциплины</param>
-        /// <returns>спиок дисциплин</returns>
+        /// <returns>список тем</returns>
         public static List<Topic> GetFolderNames(string path)
         {
             try

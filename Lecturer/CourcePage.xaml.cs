@@ -22,30 +22,6 @@ namespace Lecturer
             ShowsNavigationUI = false;
         }
 
-        /// <summary>
-        /// готовим данные для вывода на экран
-        /// </summary>
-        private void PrepareData()
-        {
-            if (Cource.MyCource.Subjects == null)
-            {
-                XMLProcessor xProc = new XMLProcessor("settings.xml");
-
-                Cource.MyCource.Subjects = xProc.GetSubjectList();
-            }
-
-            if (Cource.MyCource.Subjects == null)
-                Cource.MyCource.Subjects = new List<Subject>()
-                {
-                    new Subject()
-                    {   Name = "Рассписание не найдено",
-                        Hours = "--"
-                    }
-                };
-            myList.ItemsSource = Cource.MyCource.Subjects;                        
-        }        
-
-
         private void myList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (myList.SelectedItem != null)
@@ -56,26 +32,11 @@ namespace Lecturer
                 try
                 {
                     XMLProcessor xProc = new XMLProcessor("settings.xml");
-                    selectedItem.Topics = new List<Topic>();
+                    selectedItem.Topics = xProc.GetTopicList(selectedItem.Name);
 
-                    //ищем список тем
-                    var items = xProc.PersonalData.Root.Elements("semester")
-                        .FirstOrDefault(elem => elem.Attribute("number").Value == Cource.MyCource.Semester)
-                        .Elements("subject")
-                        .SingleOrDefault(elem => elem.Attribute("name").Value == selectedItem.Name)
-                        .Elements("topic");
-
-                    if (items == null || items.Count() == 0)
+                    if(selectedItem.Topics == null)
                         throw new Exception();
 
-                    foreach (var item in items)
-                    {
-                        selectedItem.Topics.Add(new Topic
-                        {
-                            Name = item.Attribute("name").Value,
-                            IsStudied = (item.Attribute("isStudied").Value.ToLower() == "false") ? false : true
-                        });
-                    }
                 }
 
                 //иначе - в папке программы на диске
@@ -90,6 +51,7 @@ namespace Lecturer
                         xProc.FillTopicList(selectedItem);
                     }
                 }
+
                 //переход на страницу дисциплины
                 finally
                 {
@@ -112,6 +74,32 @@ namespace Lecturer
         {
             NavigationService nav = NavigationService.GetNavigationService(this);
             nav.Navigate(new Uri("UserDataPage.xaml", UriKind.RelativeOrAbsolute));
+        }
+
+
+        /// <summary>
+        /// готовим данные для вывода на экран
+        /// </summary>
+        private void PrepareData()
+        {
+            if (Cource.MyCource.Subjects == null)
+            {
+                XMLProcessor xProc = new XMLProcessor("settings.xml");
+
+                Cource.MyCource.Subjects = xProc.GetSubjectList();
+
+
+                if (Cource.MyCource.Subjects == null)
+                    Cource.MyCource.Subjects = new List<Subject>()
+                    {
+                        new Subject()
+                        {   Name = "Рассписание не найдено",
+                            Hours = "--"
+                        }
+                    };
+            }
+
+            myList.ItemsSource = Cource.MyCource.Subjects;
         }
     }
 }

@@ -22,11 +22,6 @@ namespace Lecturer.Data.Entities
         public string Hours { get; set; }
 
         /// <summary>
-        /// иденитификатор дисциплины
-        /// </summary>
-        public string ID { get; set; }
-
-        /// <summary>
         /// Выбранная тема
         /// </summary>
         public Topic SelectedTopic { get; set; }

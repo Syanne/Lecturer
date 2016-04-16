@@ -41,18 +41,7 @@ namespace Lecturer
             tbTitle.Text = Cource.MyCource.SelectedSubject.Name;
             myList.ItemsSource = Cource.MyCource.SelectedSubject.Topics;
         }
-
-
-        private void PopupButton_Click(object sender, RoutedEventArgs e)
-        {
-            switch((sender as Button).Tag.ToString())
-            {
-                case "0": break;
-                case "1": break;
-                default: ActionPopup.IsOpen = false;
-                    break;
-            }
-        }
+        
 
         private void myList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

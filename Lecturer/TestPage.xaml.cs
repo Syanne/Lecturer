@@ -12,8 +12,9 @@ namespace Lecturer
     /// </summary>
     public partial class TestPage : Page
     {
-        Quiz quiz;
-        int Points;
+        Quiz MainQuiz { get; set; }
+        int Points { get; set; }
+
         public TestPage()
         {
             InitializeComponent();
@@ -21,128 +22,66 @@ namespace Lecturer
             PrepareTest();
         }
 
-        private void PrepareTest()
-        {
-            XMLProcessor x = new XMLProcessor(Cource.MyCource.SelectedSubject.SelectedTopic.TestUri);
-            quiz = x.ReadQuizFile();
-            
-
-            QuizName.Text = quiz.TestName;
-            for (int i = 0; i < quiz.Questions.Count; i++)
-            {
-                StackPanel panel = new StackPanel();
-                TextBlock tb = new TextBlock
-                {
-                    Text = quiz.Questions[i].Text,
-                    Style = (Style)this.Resources["tbQuestionStyle"]
-                };
-                panel.Children.Add(tb);
-                panel.Tag = i;
-
-                for (int j = 0; j < quiz.Questions[i].Answers.Count; j++)
-                {
-                    if (quiz.Questions[i].IsOneTrue == false)
-                        panel.Children.Add(CreateCheckBox(quiz.Questions[i].Answers[j],
-                            quiz.Questions[i].Values[j]));
-                    else panel.Children.Add(CreateRadioButton(quiz.Questions[i].Answers[j],
-                            quiz.Questions[i].Values[j]));
-                }
-
-                TestPanel.Children.Add(panel);
-            }
-        }
-
-        private RadioButton CreateRadioButton(string text, string tag)
-        {
-            return new RadioButton
-            {
-                Content = text,
-                Tag = tag,
-                IsChecked = false,
-                Style = (Style)this.Resources["rbStyle"]
-            };
-        }
-        private CheckBox CreateCheckBox(string text, string tag)
-        {
-            return new CheckBox
-            {
-                Content = text,
-                Tag = tag,
-                IsChecked = false,
-                Style = (Style)this.Resources["cbStyle"]
-            };
-        }
-
         private void btnDone_Click(object sender, RoutedEventArgs e)
         {
             Points = 0;
-            int? isAllHasAnswer = 0;
+            int? isAnswered  = null;
 
             //просматриваем все вопросы
             foreach (var panel in TestPanel.Children)
-                {
-                    int tag = Convert.ToInt32((panel as StackPanel).Tag);
-                    // var type = (quiz.Questions[tag].IsOneTrue == true) ? typeof(RadioButton) : typeof(CheckBox);
-                    bool flag = true;
-                    isAllHasAnswer = 0;
+            {
+                int counter = 0;
+                isAnswered  = 0;
 
                 //просматриваем все ответы 
-                    foreach (var children in (panel as StackPanel).Children)
-                    {
-                        if (children.GetType() == typeof(RadioButton))
-                        {
-                            if ((children as RadioButton).IsChecked == false)
-                                isAllHasAnswer += 1;
-
-                            if ((children as RadioButton).IsChecked == Convert.ToBoolean((children as RadioButton).Tag))
-                            {
-                                flag = true;
-                            }
-                            else
-                            {
-                                flag = false;
-                            }
-                        }
-                        else if (children.GetType() == typeof(CheckBox))
-                        {
-                            if ((children as CheckBox).IsChecked == false)
-                                isAllHasAnswer += 1;
-
-                            if ((children as CheckBox).IsChecked == Convert.ToBoolean((children as CheckBox).Tag))
-                            {
-                                flag = true;
-                            }
-                            else
-                            {
-                                flag = false;
-                            }
-                        }
-
-                    }
-                //если пользователь не ответил ни на один вопрос - выбрасываем предупреждение
-                if (isAllHasAnswer == (panel as StackPanel).Children.Count - 1)
+                foreach (var child in (panel as StackPanel).Children)
                 {
-                    isAllHasAnswer = null;
+                    if (child.GetType() == typeof(RadioButton))
+                    {
+                        if ((child as RadioButton).IsChecked == false)
+                            isAnswered  += 1;
+
+                        if ((child as RadioButton).IsChecked == Convert.ToBoolean((child as RadioButton).Tag))
+                        {
+                            counter += 1;
+                        }
+                    }
+                    else if (child.GetType() == typeof(CheckBox))
+                    {
+                        if ((child as CheckBox).IsChecked == false)
+                            isAnswered  += 1;
+
+                        if ((child as CheckBox).IsChecked == Convert.ToBoolean((child as CheckBox).Tag))
+                        {
+                            counter += 1;
+                        }
+                    }
+
+                }
+                //если пользователь не ответил ни на один вопрос - выбрасываем предупреждение
+                if (isAnswered  == (panel as StackPanel).Children.Count - 1)
+                {
+                    isAnswered  = null;
                     if (MessageBox.Show("Ви відповіли не на усі питання!", "Результат") == MessageBoxResult.OK)
                         break;
                 }
 
-                    if (flag == true)
-                        Points += 1;
-                }
+                if (counter == (panel as StackPanel).Children.Count - 1)
+                    Points += 1;
+            }
 
             //Результат прохождения теста
-            if (isAllHasAnswer != null)
+            if (isAnswered  != null)
             {
                 string message = String.Format("Ваш результат складає {0} з {1} \n{2}",
                     Points.ToString(),
-                    quiz.Questions.Count,
-                    (quiz.MinPoints > Points) ? "Ви не пройшли тест" : "Ви пройшли тест");
+                    MainQuiz.Questions.Count,
+                    (MainQuiz.MinPoints > Points) ? "Ви не пройшли тест" : "Ви пройшли тест");
 
 
                 if (MessageBox.Show(message, "Результат") == MessageBoxResult.OK)
                 {
-                    if (quiz.MinPoints < Points)
+                    if (MainQuiz.MinPoints <= Points)
                     {
                         XMLProcessor xProc = new XMLProcessor("settings.xml");
                         xProc.SetTopicStudied();
@@ -155,7 +94,87 @@ namespace Lecturer
                 Cource.MyCource.SelectedSubject.SelectedTopic = null;
                 nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
             }
+        }
+        
 
+        /// <summary>
+        /// Подготовка теста
+        /// </summary>
+        private void PrepareTest()
+        {
+            //файл теста
+            XMLProcessor x = new XMLProcessor(Cource.MyCource.SelectedSubject.SelectedTopic.TestUri);
+            MainQuiz = x.ReadQuizFile();
+
+            if (MainQuiz != null)
+            {
+                //название теста
+                QuizName.Text = MainQuiz.TestName;
+
+                //вопросы
+                for (int i = 0; i < MainQuiz.Questions.Count; i++)
+                {
+                    StackPanel panel = new StackPanel();
+
+                    //вопрос
+                    TextBlock tb = new TextBlock
+                    {
+                        Text = MainQuiz.Questions[i].Text,
+                        Style = (Style)this.Resources["tbQuestionStyle"]
+                    };
+
+                    panel.Children.Add(tb);
+                    panel.Tag = i;
+
+                    //варианты ответа
+                    for (int j = 0; j < MainQuiz.Questions[i].Answers.Count; j++)
+                    {
+                        if (MainQuiz.Questions[i].IsOneTrue == false)
+                            panel.Children.Add(CreateCheckBox(MainQuiz.Questions[i].Answers[j],
+                                MainQuiz.Questions[i].Values[j]));
+                        else panel.Children.Add(CreateRadioButton(MainQuiz.Questions[i].Answers[j],
+                                MainQuiz.Questions[i].Values[j]));
+                    }
+
+                    TestPanel.Children.Add(panel);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// создание радио-кнопки
+        /// </summary>
+        /// <param name="text">текст</param>
+        /// <param name="tag">значение (правильный ответ или нет)</param>
+        /// <returns>радио-кнопка</returns>
+        private RadioButton CreateRadioButton(string text, string tag)
+        {
+            return new RadioButton
+            {
+                Content = text,
+                Tag = tag,
+                IsChecked = false,
+                Style = (Style)this.Resources["rbStyle"]
+            };
+        }
+
+
+        /// <summary>
+        /// создание чекбокса
+        /// </summary>
+        /// <param name="text">текст</param>
+        /// <param name="tag">значение (правильный ответ или нет)</param>
+        /// <returns>чекбокс</returns>
+        private CheckBox CreateCheckBox(string text, string tag)
+        {
+            return new CheckBox
+            {
+                Content = text,
+                Tag = tag,
+                IsChecked = false,
+                Style = (Style)this.Resources["cbStyle"]
+            };
         }
     }
 }

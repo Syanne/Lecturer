@@ -14,14 +14,17 @@ namespace Lecturer
     /// </summary>
     public partial class StartPage : Page
     {
-        List<Institute> inses;
+        List<Department> Departments { get; set; }
+
+        #region слушатели
         public StartPage()
         {
             InitializeComponent();
 
             GetUniversityList();            
         }
-
+        
+        
         private void Done_Click(object sender, RoutedEventArgs e)
         {
             loadingGrid.Visibility = Visibility.Visible;
@@ -31,95 +34,6 @@ namespace Lecturer
             }
 
         }
-
-        private void GetUniversityList()
-        {
-            inses = new List<Institute>();
-            try
-            { 
-                XMLProcessor xProc = new XMLProcessor("University.xml");
-
-                //список всех институтов и факультетов
-                foreach (var item in xProc.PersonalData.Root.Elements("univertsity"))
-                {
-                    Institute ins = new Institute
-                    {
-                        Name = item.Attribute("name").Value,
-                        FolderName = item.Attribute("folder").Value,
-                        Specialities = new List<Speciality>()
-                    };
-
-                    //все специальности
-                    foreach (var spec in item.Elements("speiality"))
-                    {
-                        Speciality sp = new Speciality
-                        {
-                            Name = spec.Attribute("name").Value,
-                            Code = spec.Attribute("code").Value,
-                            FolderName = spec.Attribute("folder").Value,
-                            Cources = new List<int>()
-                        };
-
-                        //курсы
-                        int count = Convert.ToInt32(spec.Attribute("last").Value);
-                        int start = Convert.ToInt32(spec.Attribute("first").Value);
-                        for (int i = start; i <= count; i++)
-                        {
-                            sp.Cources.Add(i);
-                        }
-
-                        ins.Specialities.Add(sp);
-                    }
-
-                    inses.Add(ins);
-                }
-
-                comboIns.ItemsSource = inses;
-            }
-            catch
-            {
-
-            }
-        }
-
-        private async void ProcessUserFile()
-        {
-            XMLProcessor processor = new XMLProcessor("settings.xml");
-            if (processor.PersonalData == null)
-            {
-                Cource.MyCource.Semester = comboSemester.SelectedValue.ToString();
-                Cource.MyCource.GroupName = comboCource.SelectedValue.ToString() + " " + (comboSpec.SelectedValue as Speciality).Code;
-                Cource.MyCource.SpecialityCode = (comboSpec.SelectedValue as Speciality).FolderName;
-                Cource.MyCource.SpecialityName = (comboSpec.SelectedValue as Speciality).Name;
-                Cource.MyCource.InstituteCode = (comboIns.SelectedValue as Institute).FolderName;
-                Cource.MyCource.CourceNumber = comboCource.SelectedValue.ToString();
-
-
-                //создание файла с настройками
-                Dictionary<string, string> dictionary = new Dictionary<string, string>();
-
-                dictionary.Add("name", "");
-                dictionary.Add("surname", "");
-                dictionary.Add("location", Cource.MyCource.RootFolderPath);
-                dictionary.Add("institute", Cource.MyCource.InstituteCode);
-                dictionary.Add("specialityCode", Cource.MyCource.SpecialityCode);
-                dictionary.Add("specialityName", Cource.MyCource.SpecialityName);
-                dictionary.Add("courceNumber", Cource.MyCource.CourceNumber);
-                dictionary.Add("semester", Cource.MyCource.Semester);
-
-
-
-                await StorageProcessor.GetSemesterFilesAsync();
-
-                processor.CreateSettingsFile(dictionary);
-                processor.WriteSemester();
-            }            
-
-            NavigationService nav = NavigationService.GetNavigationService(this);
-            nav.Navigate(new Uri("CourcePage.xaml", UriKind.RelativeOrAbsolute));
-        }
-
-
 
         private void Folder_GotFocus(object sender, RoutedEventArgs e)
         {
@@ -134,7 +48,6 @@ namespace Lecturer
                 Folder.Text = folderDlg.SelectedPath;
                 Cource.MyCource.RootFolderPath = StorageProcessor.CreateDirectory(folderDlg.SelectedPath, "Лектор");
             }
-            //else Folder.Text = "";
         }
 
         private void comboIns_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -148,7 +61,7 @@ namespace Lecturer
                 comboSemester.IsEnabled = false;
             }
 
-            comboSpec.ItemsSource = (comboIns.SelectedItem as Institute).Specialities;
+            comboSpec.ItemsSource = (comboIns.SelectedItem as Department).Specialities;
             comboSpec.IsEnabled = true;
         }
 
@@ -181,6 +94,99 @@ namespace Lecturer
             comboSemester.IsEnabled = true;
         }
 
-        private List<int> mListOfIntegers = new List<int>();
+        #endregion
+
+
+        /// <summary>
+        /// Получает список подразделений
+        /// </summary>
+        private void GetUniversityList()
+        {
+            Departments = new List<Department>();
+            try
+            {
+                XMLProcessor xProc = new XMLProcessor("University.xml");
+
+                //список всех институтов и факультетов
+                foreach (var item in xProc.XFile.Root.Elements("univertsity"))
+                {
+                    Department ins = new Department
+                    {
+                        Name = item.Attribute("name").Value,
+                        FolderName = item.Attribute("folder").Value,
+                        Specialities = new List<Speciality>()
+                    };
+
+                    //все специальности
+                    foreach (var spec in item.Elements("speiality"))
+                    {
+                        Speciality sp = new Speciality
+                        {
+                            Name = spec.Attribute("name").Value,
+                            Code = spec.Attribute("code").Value,
+                            FolderName = spec.Attribute("folder").Value,
+                            Cources = new List<int>()
+                        };
+
+                        //курсы
+                        int count = Convert.ToInt32(spec.Attribute("last").Value);
+                        int start = Convert.ToInt32(spec.Attribute("first").Value);
+                        for (int i = start; i <= count; i++)
+                        {
+                            sp.Cources.Add(i);
+                        }
+
+                        ins.Specialities.Add(sp);
+                    }
+
+                    Departments.Add(ins);
+                }
+
+                comboIns.ItemsSource = Departments;
+            }
+            catch
+            {
+
+            }
+        }
+
+        /// <summary>
+        /// Скачивание данных с сервера и сохранение в файл с личными данными/на диск
+        /// </summary>
+        private async void ProcessUserFile()
+        {
+            XMLProcessor processor = new XMLProcessor("settings.xml");
+            if (processor.XFile == null)
+            {
+                Cource.MyCource.Semester = comboSemester.SelectedValue.ToString();
+                Cource.MyCource.GroupName = comboCource.SelectedValue.ToString() + " " + (comboSpec.SelectedValue as Speciality).Code;
+                Cource.MyCource.SpecialityCode = (comboSpec.SelectedValue as Speciality).FolderName;
+                Cource.MyCource.SpecialityName = (comboSpec.SelectedValue as Speciality).Name;
+                Cource.MyCource.InstituteCode = (comboIns.SelectedValue as Department).FolderName;
+                Cource.MyCource.CourceNumber = comboCource.SelectedValue.ToString();
+
+
+                //создание файла с настройками
+                Dictionary<string, string> dictionary = new Dictionary<string, string>();
+
+                dictionary.Add("name", "");
+                dictionary.Add("surname", "");
+                dictionary.Add("location", Cource.MyCource.RootFolderPath);
+                dictionary.Add("institute", Cource.MyCource.InstituteCode);
+                dictionary.Add("specialityCode", Cource.MyCource.SpecialityCode);
+                dictionary.Add("specialityName", Cource.MyCource.SpecialityName);
+                dictionary.Add("courceNumber", Cource.MyCource.CourceNumber);
+                dictionary.Add("semester", Cource.MyCource.Semester);
+
+                //загрузка данных
+                await StorageProcessor.GetSemesterFilesAsync();
+
+                processor.CreateSettingsFile(dictionary);
+                processor.WriteSemester();
+            }
+
+            NavigationService nav = NavigationService.GetNavigationService(this);
+            nav.Navigate(new Uri("CourcePage.xaml", UriKind.RelativeOrAbsolute));
+        }
     }
 }

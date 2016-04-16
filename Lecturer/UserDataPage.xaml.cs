@@ -15,8 +15,8 @@ namespace Lecturer
     public partial class UserDataPage : Page
     {
         List<UserData> uData;
-        int SelectedIndex;
-        XMLProcessor xProc;
+        int SelectedIndex { get; set; }
+        XMLProcessor xProc { get; set; }
 
         public UserDataPage()
         {
@@ -27,7 +27,6 @@ namespace Lecturer
             xProc.PrepareUserData(ref uData);
             lvPersonalData.ItemsSource = uData;
         }
-
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -104,7 +103,6 @@ namespace Lecturer
         /// Подготовка к загрузке данных 
         /// </summary>
         /// <param name="courceValue">номер курса</param>
-        /// <param name="answer"></param>
         private async void LoadFilesFromServer(int courceValue)
         {
             loadingGrid.Visibility = Visibility.Visible;
@@ -139,7 +137,7 @@ namespace Lecturer
         /// <param name="changedValue">измененное значение</param>
         private void WriteDataIntoFile(string changedValue)
         {
-            var root = xProc.PersonalData.Root;
+            var root = xProc.XFile.Root;
 
             root.Attribute(uData[SelectedIndex].Key).Value = changedValue;
             xProc.SaveDocument();

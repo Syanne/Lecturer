@@ -15,12 +15,7 @@ namespace Lecturer.Data.Processor
         private string connectionString;
 
         private string sheetName;
-
-        /// <summary>
-        /// Название таблицы
-        /// </summary>
-        public string TableTitle { get; set; }
-
+        
         /// <summary>
         /// Конструктор
         /// </summary>
@@ -31,16 +26,16 @@ namespace Lecturer.Data.Processor
             //строка открытия бд (в данном случае - xls/xlst файла)
             connectionString = GetConnectionString(path, "No");
             sheetName = _sheetName;
-        }       
+        }
 
 
         /// <summary>
         /// Строка подключения к файлу 
         /// </summary>
-        /// <param name="FileName">Расположение файла на локальном компьютере</param>
-        /// <param name="Header">заголовое</param>
+        /// <param name="path">Расположение файла на локальном компьютере</param>
+        /// <param name="header">заголовое</param>
         /// <returns>Строка подключения</returns>
-        private string GetConnectionString(string path, string Header)
+        private string GetConnectionString(string path, string header)
         {
             string FileName = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
 
@@ -48,16 +43,15 @@ namespace Lecturer.Data.Processor
             if (System.IO.Path.GetExtension(FileName).ToUpper() == ".XLS")
             {
                 Builder.Provider = "Microsoft.Jet.OLEDB.4.0";
-                Builder.Add("Extended Properties", string.Format("Excel 8.0;IMEX=1;HDR={0};", Header));
+                Builder.Add("Extended Properties", string.Format("Excel 8.0;IMEX=1;HDR={0};", header));
             }
             else
             {
                 Builder.Provider = "Microsoft.ACE.OLEDB.12.0";
-                Builder.Add("Extended Properties", string.Format("Excel 12.0;IMEX=1;HDR={0};", Header));
+                Builder.Add("Extended Properties", string.Format("Excel 12.0;IMEX=1;HDR={0};", header));
             }
 
             Builder.DataSource = FileName;
-
             return Builder.ConnectionString;
         }
 
@@ -128,6 +122,7 @@ namespace Lecturer.Data.Processor
             }
         }
 
+
         /// <summary>
         /// Список дисциплин
         /// </summary>
@@ -153,11 +148,7 @@ namespace Lecturer.Data.Processor
                     else if (table.Rows[0][i].ToString().ToLower() == "спеціальність")
                         subjectName = i;
                 }
-
-                //имя таблицы - код группы
-                TableTitle = table.Rows[subjectName+2][1].ToString();
-
-
+                
                 counter = ds.Tables[0].Rows.Count;
                 for (int i = subjectName; i < counter; i++)
                 {
@@ -172,8 +163,7 @@ namespace Lecturer.Data.Processor
                             {
                                 Name = row[1].ToString(),
                                 Teacher = "Викладач: " + row[teacherName].ToString(),
-                                Hours = hours,
-                                ID = row[2].ToString()
+                                Hours = hours
                             });
                         }
                     }
@@ -185,9 +175,6 @@ namespace Lecturer.Data.Processor
             {
                 return null;
             }
-        }
-        
-
-        
+        }     
     }
 }
