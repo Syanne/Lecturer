@@ -27,8 +27,8 @@
                    Content="Лектор: система вивчення теоретичного матеріалу"/>
         </Grid>
         <Grid Width="300"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center">
             <StackPanel Orientation="Horizontal" 
                         Style="{StaticResource StartPageSP}">
                 <Label Name="lblUniversity" 
@@ -50,50 +50,15 @@
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <ComboBoxItem Content="{Binding Name}"
+                                          IsEnabled="False"
+                                          Foreground="Black"
+                                          Opacity="1"
                                           Tag="{Binding Folder}"/>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
 
             </StackPanel>
-            <!--<StackPanel Orientation="Horizontal" 
-                        Style="{StaticResource StartPageSP}">
-                <Label Name="UserNameLabel" 
-                       Content="Логін"
-                       Width="80" 
-                       FontSize="14"
-                       FontFamily="{StaticResource MainFontStyle}"
-                       Foreground="#9b9fa8"
-                       Margin="0, 5, 5, 5"/>
-                <TextBox Name="UserName" 
-                         Width="140" 
-                         FontSize="14"
-                         FontFamily="{StaticResource MainFontStyle}"
-                         Margin="5, 5, 0, 5" 
-                         VerticalContentAlignment="Center"
-                         Foreground="#303030"
-                         Background="#f2f0f4" 
-                         BorderBrush="Transparent"/>
-            </StackPanel>-->
-            <!--<StackPanel Orientation="Horizontal" 
-                        Style="{StaticResource StartPageSP}">
-                <Label Name="PasswordLabel" 
-                       Width="80" 
-                       FontSize="14"
-                       FontFamily="{StaticResource MainFontStyle}"
-                       Content="Пароль"
-                       Foreground="#9b9fa8"
-                       Margin="0, 5, 5, 5"/>
-                <PasswordBox Name="Password" 
-                             Width="140" 
-                             FontSize="14"
-                             VerticalContentAlignment="Center"
-                             FontFamily="{StaticResource MainFontStyle}"
-                             Margin="5, 5, 0, 5" 
-                             Background="#f2f0f4" 
-                             Foreground="#303030"
-                             BorderBrush="Transparent" />
-            </StackPanel>-->
             <StackPanel Orientation="Horizontal" 
                         Margin="10, 40, 10, 5"
                         Style="{StaticResource StartPageSP}">
@@ -118,6 +83,9 @@
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <ComboBoxItem Content="{Binding Name}"
+                                          IsEnabled="False"
+                                          Foreground="Black"
+                                          Opacity="1"
                                           Tag="{Binding Folder}"/>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
@@ -140,7 +108,7 @@
                          FontFamily="{StaticResource MainFontStyle}"
                          Margin="5, 5, 0, 5" 
                          VerticalContentAlignment="Center"
-                         Foreground="#303030"
+                         Foreground="Gray"
                          Background="#f2f0f4" 
                          BorderBrush="Transparent"
                          GotFocus="Folder_GotFocus"/>
@@ -150,42 +118,22 @@
                         Style="{StaticResource StartPageSP}">
                 <Label Name="lblCource" 
                        Content="Курс"
-                       Width="50" 
+                       Width="100" 
                        FontSize="14"
                        FontFamily="{StaticResource MainFontStyle}"
                        Foreground="#9b9fa8"
-                       Margin="0, 5, 5, 5"/>
+                       Margin="5, 5, 5, 5"/>
                 <ComboBox Name="comboCource" Width="70" 
                          FontSize="14"
                           IsEnabled="False"
                           IsEditable="False"
                          FontFamily="{StaticResource MainFontStyle}"
-                         Margin="5, 5, 0, 5" 
-                          SelectionChanged="comboCource_SelectionChanged"
+                         Margin="5, 5, 100, 5" 
                          VerticalContentAlignment="Center"
                          ItemsSource="{Binding Cources}"
-                         Foreground="#303030"
+                         Foreground="Gray"
                          Background="#f2f0f4" 
                          BorderBrush="Transparent">
-                </ComboBox>
-                <Label Name="lblSemester" 
-                       Content="Семестр"
-                       Width="70" 
-                       FontSize="14"
-                       FontFamily="{StaticResource MainFontStyle}"
-                       Foreground="#9b9fa8"
-                       Margin="10,5,0,5"/>
-                <ComboBox Name="comboSemester" Width="65" 
-                         FontSize="14"
-                          IsEnabled="False"
-                          IsEditable="False"
-                         FontFamily="{StaticResource MainFontStyle}"
-                         Margin="5, 5, 0, 5" 
-                         VerticalContentAlignment="Center"
-                         Foreground="#303030"
-                         Background="#f2f0f4" 
-                         BorderBrush="Transparent"
-                        ItemsSource="{Binding ArrayOfIntegers}">
                 </ComboBox>
             </StackPanel>
             <Button Name="Done" 
@@ -196,7 +144,7 @@
                     FontFamily="{StaticResource MainFontStyle}"
                     BorderBrush="Transparent"
                     Background="{StaticResource MainColorBrush}"
-                    Foreground="#ffffff"
+                    Foreground="White"
                     Width="auto" Height="35"
                     Margin="10, 180, 10, 10"/>
         </Grid>

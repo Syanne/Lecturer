@@ -27,12 +27,11 @@ namespace Lecturer
         
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            loadingGrid.Visibility = Visibility.Visible;
-            if (comboSemester.SelectedIndex != -1 && Folder.Text != "")
+            if (comboCource.SelectedIndex > -1 && Folder.Text != "")
             {
+                loadingGrid.Visibility = Visibility.Visible;
                 ProcessUserFile();
             }
-
         }
 
         private void Folder_GotFocus(object sender, RoutedEventArgs e)
@@ -56,9 +55,6 @@ namespace Lecturer
             {
                 comboCource.ItemsSource = null;
                 comboCource.IsEnabled = false;
-
-                comboSemester.ItemsSource = null;
-                comboSemester.IsEnabled = false;
             }
 
             comboSpec.ItemsSource = (comboIns.SelectedItem as Department).Specialities;
@@ -67,33 +63,9 @@ namespace Lecturer
 
         private void comboSpec_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (comboCource.IsEnabled == true)
-            {
-                comboSemester.ItemsSource = null;
-                comboSemester.IsEnabled = false;
-            }
-
             comboCource.ItemsSource = (comboSpec.SelectedItem as Speciality).Cources;
             comboCource.IsEnabled = true;
         }
-
-        private void comboCource_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            List<int> ListOfIntegers;
-            int switcher = (int)comboCource.SelectedItem;
-            switch (switcher)
-            {
-                case 1: ListOfIntegers = new List<int> { 1, 2 }; break;
-                case 2: ListOfIntegers = new List<int> { 3, 4 }; break;
-                case 3: ListOfIntegers = new List<int> { 5, 6 }; break;
-                case 4: ListOfIntegers = new List<int> { 7, 8 }; break;
-                default: ListOfIntegers = new List<int> { 9, 10, 11 }; break;
-            }
-
-            comboSemester.ItemsSource = ListOfIntegers;
-            comboSemester.IsEnabled = true;
-        }
-
         #endregion
 
 
@@ -158,7 +130,16 @@ namespace Lecturer
             XMLProcessor processor = new XMLProcessor("settings.xml");
             if (processor.XFile == null)
             {
-                Cource.MyCource.Semester = comboSemester.SelectedValue.ToString();
+                //определить семестр
+                int courceValue = Convert.ToInt32(comboCource.SelectedValue);
+                int semester = 0;
+                if (DateTime.Now.Month > 1 && DateTime.Now.Month <= 5)
+                    semester = courceValue * 2;
+                else if (DateTime.Now.Month >= 9)
+                    semester = courceValue * 2 - 1;
+
+
+                Cource.MyCource.Semester = semester.ToString();
                 Cource.MyCource.GroupName = comboCource.SelectedValue.ToString() + " " + (comboSpec.SelectedValue as Speciality).Code;
                 Cource.MyCource.SpecialityCode = (comboSpec.SelectedValue as Speciality).FolderName;
                 Cource.MyCource.SpecialityName = (comboSpec.SelectedValue as Speciality).Name;

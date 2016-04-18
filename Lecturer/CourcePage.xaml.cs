@@ -40,7 +40,7 @@ namespace Lecturer
                 }
 
                 //иначе - в папке программы на диске
-                catch (Exception ex)
+                catch
                 {
                     var folderPath = System.IO.Path.Combine(Cource.MyCource.RootFolderPath, Cource.MyCource.Semester, StorageProcessor.ReplaceCharacters(selectedItem.Name, false));
                     selectedItem.Topics = StorageProcessor.GetFolderNames(folderPath);

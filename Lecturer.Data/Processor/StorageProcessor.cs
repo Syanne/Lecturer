@@ -13,11 +13,6 @@ namespace Lecturer.Data.Processor
 {
     public class StorageProcessor
     {
-        private const string username = "2lecturer";
-        private const string password = "student12345";
-        private const string uri = "ftp://lecturer.at.ua/";
-
-
         /// <summary>
         /// Замена символов
         /// </summary>
@@ -30,14 +25,16 @@ namespace Lecturer.Data.Processor
                 return uri.Replace('і', '_').Replace('І', '_');
             else return uri.Replace('_', 'і');
         }
-        
+
 
         /// <summary>
         /// Подготовка потока для чтения содержимого директории
         /// </summary>
         /// <param name="path">путь на сервере</param>
+        /// <param name="username">имя пользователя</param>
+        /// <param name="password">пароль</param>
         /// <returns>поток</returns>
-        private static StreamReader ListDirectoriesOnServer(string path)
+        private static StreamReader ListDirectoriesOnServer(string path, string username, string password)
         {
             try
             {
@@ -59,8 +56,10 @@ namespace Lecturer.Data.Processor
         /// Подготовка потока для скачивания файла
         /// </summary>
         /// <param name="path">путь на сервере</param>
+        /// <param name="username">имя пользователя</param>
+        /// <param name="password">пароль</param>
         /// <returns>поток</returns>
-        private static FtpWebResponse LoadFileFromPath(string path)
+        private static FtpWebResponse LoadFileFromPath(string path, string username, string password)
         {
             try
             {
@@ -110,13 +109,19 @@ namespace Lecturer.Data.Processor
         /// <returns>путь к файлу</returns>
         public static string TryGetFileByFTP(string subpath, string localPath, string[] extensions)
         {
-            try {
+            try
+            {
+                var xmlProc = new XMLProcessor("University.xml");
+                string username = xmlProc.XFile.Root.Attribute("username").Value;
+                string password = xmlProc.XFile.Root.Attribute("password").Value;
+                string uri = xmlProc.XFile.Root.Attribute("server").Value;
 
                 string ftpAddr = uri + subpath;
                 string line = null;
 
+
                 //поиск файла с указанным расширением 
-                var fileSeek = ListDirectoriesOnServer(ftpAddr);
+                var fileSeek = ListDirectoriesOnServer(ftpAddr, username, password);
                 string filename = null;
                 line = fileSeek.ReadLine();
                 while (!string.IsNullOrEmpty(line))
@@ -137,7 +142,7 @@ namespace Lecturer.Data.Processor
                 fileSeek.Close();
 
                 //скачивание файла
-                var response = LoadFileFromPath(ftpAddr);
+                var response = LoadFileFromPath(ftpAddr, username, password);
                 if (response != null)
                 {
                     Stream responseStream = response.GetResponseStream();
@@ -228,14 +233,15 @@ namespace Lecturer.Data.Processor
             //скачивание
             string[] ext = { "xls", "xlst" };
             string subpath = instituteCode + @"/";
-            string pathToFile = TryGetFileByFTP(subpath, Cource.MyCource.RootFolderPath, ext);
-            
+            string filename = TryGetFileByFTP(subpath, Cource.MyCource.RootFolderPath, ext);
+
             //разбор и сохранение данных локально
-            ExcelFileProcessor fp = new ExcelFileProcessor(pathToFile, Cource.MyCource.GroupName);
+            string schedulePath = Path.Combine(Cource.MyCource.RootFolderPath, filename);
+            ExcelFileProcessor fp = new ExcelFileProcessor(schedulePath, Cource.MyCource.GroupName);
             Cource.MyCource.Subjects = fp.FillSource();
 
             //удаление
-            FileInfo fi = new FileInfo(pathToFile);
+            FileInfo fi = new FileInfo(schedulePath);
             fi.Delete();
         }
 

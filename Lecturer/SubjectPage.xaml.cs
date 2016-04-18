@@ -98,6 +98,19 @@ namespace Lecturer
             nav.Navigate(new Uri("CourcePage.xaml", UriKind.RelativeOrAbsolute));
 
         }
+
+        private void PopupButton_Click(object sender, RoutedEventArgs e)
+        {
+            switch ((sender as Button).Tag.ToString())
+            {
+                case "0": break;
+                case "1": break;
+                default:
+                    ActionPopup.IsOpen = false;
+                    break;
+            }
+        }
+
         /// <summary>
         /// Проверка наличия Adobe Reader
         /// </summary>

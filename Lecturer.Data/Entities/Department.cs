@@ -19,6 +19,7 @@ namespace Lecturer.Data.Entities
         public string Name { get; set; }
         public string FolderName { get; set; }
         public List<int> Cources { get; set; }
+        public bool IsEnabled = false;
     }
 
 }
