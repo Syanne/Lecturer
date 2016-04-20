@@ -85,7 +85,6 @@ namespace Lecturer.Data.Processor
         {
             return Task.Run(() =>
             {
-
                 var folder = new DirectoryInfo(Path.Combine(Cource.MyCource.RootFolderPath, Cource.MyCource.Semester));
                 if (!folder.Exists)
                 {
@@ -118,7 +117,6 @@ namespace Lecturer.Data.Processor
 
                 string ftpAddr = uri + subpath;
                 string line = null;
-
 
                 //поиск файла с указанным расширением 
                 var fileSeek = ListDirectoriesOnServer(ftpAddr, username, password);
@@ -167,7 +165,7 @@ namespace Lecturer.Data.Processor
 
                 return null;
             }
-            catch
+            catch(Exception ex)
             {
                 return null;
             }
@@ -228,7 +226,7 @@ namespace Lecturer.Data.Processor
         /// Обработка файла с расписанием (списком дисциплин)
         /// </summary>
         /// <param name="instituteCode">код института/факультета</param>
-        private static void ProcessSchedule(string instituteCode)
+        public static void ProcessSchedule(string instituteCode)
         {
             //скачивание
             string[] ext = { "xls", "xlst" };
