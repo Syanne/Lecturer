@@ -42,7 +42,7 @@ namespace Lecturer
             InputDialog inputDialog = new InputDialog(instance.Title, instance.Value);
 
 
-            if (instance.Key != "location")
+            if (instance.Key != "location" && instance.Key != "remove")
             {
                 if (inputDialog.ShowDialog() == true)
                 {
@@ -71,6 +71,14 @@ namespace Lecturer
                             }
                         }
                     }
+                }
+            }
+            else if(instance.Key == "remove")
+            {
+                if (MessageBox.Show("Ви дійсно бажайте вийти з акаунта та видалити всі дані? Файли з навчальними матеріалами не буде видалено", "Увага!", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    File.Delete("settings.xml");
+                    Application.Current.Shutdown();
                 }
             }
             //путь к директории с файлами

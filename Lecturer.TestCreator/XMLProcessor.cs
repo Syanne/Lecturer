@@ -10,6 +10,7 @@ namespace Lecturer.TestCreator
     {
         private string Path { get; set; }
         public XDocument PersonalData { get; set; }
+        string key;
 
         /// <summary>
         /// Конструктор
@@ -18,7 +19,6 @@ namespace Lecturer.TestCreator
         public XMLProcessor(string pathString)
         {
             Path = pathString;
-
             try
             {
                 PersonalData = XDocument.Load(Path);
@@ -72,21 +72,22 @@ namespace Lecturer.TestCreator
         /// Создание файла личных настроек
         /// </summary>
         /// <param name="dictionary">словарь значений, которые будут записаны в файл</param>
-        public void CreateTestFile(Dictionary<string, string> dictionary, List<Questions> ques)
+        public void CreateTestFile(string testName, string minPoints, List<Questions> ques)
         {
             try
             {
                 PersonalData = new XDocument();
                 //root
                 PersonalData = new XDocument(new XElement("root", PersonalData.Root));
-                
+
+                key = testName;
+
                 //first parent
                 using (XmlWriter writer = PersonalData.Root.CreateWriter())
                 {
-                    for (int i = 0; i < dictionary.Count; i++)
-                    {
-                        SetAttribute(writer, dictionary.Keys.ElementAt(i), CryptoProcessor.Encrypt(dictionary.Values.ElementAt(i)));
-                    }                    
+                    SetAttribute(writer, "testName", testName);
+                    SetAttribute(writer, "minPoints", CryptoProcessor.Encrypt(minPoints, key));
+
                 }
 
 
@@ -99,13 +100,13 @@ namespace Lecturer.TestCreator
                     }
                 }
 
+                int counter = 0;
                 foreach (var q in PersonalData.Root.Elements("question"))
                 {
-                    int counter = 0;
                     using (XmlWriter writer = q.CreateWriter())
                     {
-                        SetAttribute(writer, "text", CryptoProcessor.Encrypt(ques[counter].QuestionText));
-                        SetAttribute(writer, "trues", CryptoProcessor.Encrypt(ques[counter].TrueCount.ToString()));
+                        SetAttribute(writer, "text", CryptoProcessor.Encrypt(ques[counter].QuestionText, key));
+                        SetAttribute(writer, "trues", CryptoProcessor.Encrypt(ques[counter].TrueCount.ToString(), key));
                     }
 
                     using (XmlWriter writer = q.CreateWriter())
@@ -118,10 +119,13 @@ namespace Lecturer.TestCreator
 
                     for (int i = 0; i < ques[counter].MyTest.Count; i++)
                     {
+                        string t = ques[counter].MyTest[i].Answer;
+                        string v = ques[counter].MyTest[i].IsTrue.ToString();
+                        string encrypted = CryptoProcessor.Encrypt(t, key);
                         using (XmlWriter writer = q.Elements().ElementAt(i).CreateWriter())
                         {
-                            SetAttribute(writer, "text", CryptoProcessor.Encrypt(ques[counter].MyTest[i].Answer));
-                            SetAttribute(writer, "value", CryptoProcessor.Encrypt(ques[counter].MyTest[i].IsTrue.ToString()));
+                            SetAttribute(writer, "text", encrypted);
+                            SetAttribute(writer, "value", CryptoProcessor.Encrypt(v, key));
                         }
                     }
                     counter += 1;

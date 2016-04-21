@@ -22,6 +22,8 @@
                       Margin="10, 60"
                       VerticalScrollBarVisibility="Auto">
             <StackPanel Name="TestPanel" 
+                        Width="auto"
+                        HorizontalAlignment="Stretch"
                         Style="{StaticResource mainStackPanel}"/>
         </ScrollViewer>
         <Button Name="btnDone"

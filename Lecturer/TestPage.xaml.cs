@@ -114,12 +114,15 @@ namespace Lecturer
                 //вопросы
                 for (int i = 0; i < MainQuiz.Questions.Count; i++)
                 {
-                    StackPanel panel = new StackPanel();
+                    StackPanel panel = new StackPanel
+                    {
+                        Margin = new Thickness(5, 5, 5, 10)
+                    };
 
                     //вопрос
                     TextBlock tb = new TextBlock
                     {
-                        Text = MainQuiz.Questions[i].Text,
+                        Text = (i+1) +". "+MainQuiz.Questions[i].Text,
                         Style = (Style)this.Resources["tbQuestionStyle"]
                     };
 
@@ -152,7 +155,12 @@ namespace Lecturer
         {
             return new RadioButton
             {
-                Content = text,
+                Content = new TextBlock
+                {
+                    Text = text,
+                    TextWrapping = TextWrapping.Wrap,
+                    FontSize = 14
+                },
                 Tag = tag,
                 IsChecked = false,
                 Style = (Style)this.Resources["rbStyle"]
@@ -170,7 +178,12 @@ namespace Lecturer
         {
             return new CheckBox
             {
-                Content = text,
+                Content = new TextBlock
+                {
+                    Text = text,
+                    TextWrapping = TextWrapping.Wrap,
+                    FontSize = 14
+                },
                 Tag = tag,
                 IsChecked = false,
                 Style = (Style)this.Resources["cbStyle"]

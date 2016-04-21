@@ -47,13 +47,8 @@ namespace Lecturer.TestCreator
                 if (points < ques.Count && points > 0)
                     if (ques.Count >= 2 && tbTestName.Text != "")
                     {
-                        Dictionary<string, string> dict = new Dictionary<string, string>();
-                        dict.Add("testName", tbTestName.Text);
-                        dict.Add("minPoints", minPoints.Text);
-
-
                         XMLProcessor xProc = new XMLProcessor(PreparePath());
-                        xProc.CreateTestFile(dict, ques);                        
+                        xProc.CreateTestFile(tbTestName.Text, minPoints.Text, ques);                        
                     }
             }
             catch (Exception ex)

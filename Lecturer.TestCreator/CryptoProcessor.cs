@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -6,28 +7,36 @@ namespace Lecturer.TestCreator
 {
     public class CryptoProcessor
     {
-        private static string key = "<RSAKeyValue><Modulus>p0E8A/6qB4NGUj8NdALuKeBo5RsYezkTbt6bG3895sHXiFq9BwvwprMP9Ue61mpNpitSjDBG77QS/Ctmc0jOTy/+UTzBTLacMq3n51z5s7eGUMxY+fzfsmih6Ncl/DrGpfh+FhRzxTjtsWmOBNxoV6Dwy+BpsGaoBgBkUzeqZ70=</Modulus><Exponent>AQAB</Exponent><P>1ZsjX4Rzuhz8mX6u5BiAci6kbGYPyKLd5N4hpybHkCZYGHxd2eQr4gRH7Gp/2dBNojvDzjRD7peHRCaUkpdjsQ==</P><Q>yHMXmNtNrnuqEL146cQDi9cVgPlMqQjTo5elEmBe6FfY777Tu5yMWBgaa+4x3bFzu3nBeNvB39RUZovVWiyDzQ==</Q><DP>ZxKdVxIK5dvm6AqBSf+ou3BWVxhItYAhoratdoL3+U8HY4lfoCzCICYArswVNX2WeJpuOapuvUrRMsmLF9GFgQ==</DP><DQ>EUydhLuogJ57luZDQSmBhNgTKwZY712rpjq4LFXU2wh52HcHnvFry06JOTddZlyiOFPRtrSAjuisQA1hZF7jIQ==</DQ><InverseQ>bt6Lgljo/F9ANVnALPrds/kEy7x7VJxYYYhc626brHqmQtKZKh5kvaWblQT4A0gyfxTFFi1MMsAztdYgzuVgtg==</InverseQ><D>A9ymf1wdvnMqSENi8uMPb0GagnHD+LJqb7Stpa6kNgQTTzdzJmrA6YR4cZwwpPtK5DObYhfKR4YjqxVwdeiANPvR7J2zF+WbANxj1pY+IQg6PyGSZ3AbqQqEElyXOo3UIPkcPkztHUdz+0ylK9COD3mpcHmhf6You3yDkWS0mlE=</D></RSAKeyValue>";
+        //private static string key = "somekey";
         private static Encoding enco = Encoding.GetEncoding("cp866");
-
-        public static string Encrypt(string data)
+        
+        public static string Encrypt(string data, string key)
         {
-            byte[] encContent;
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+            SymmetricAlgorithm sa = Rijndael.Create();
+            ICryptoTransform ct = sa.CreateEncryptor(
+                (new PasswordDeriveBytes(key, null)).GetBytes(16),
+                new byte[16]);
 
-            rsa.FromXmlString(key);
-            encContent = rsa.Encrypt(ToByteArray(data), true);
-            return Convert.ToBase64String(encContent);
+            MemoryStream ms = new MemoryStream();
+            CryptoStream cs = new CryptoStream(ms, ct, CryptoStreamMode.Write);
+
+            var array = ToByteArray(data);
+
+            cs.Write(array, 0, array.Length);
+            cs.FlushFinalBlock();
+
+            array = ms.ToArray();
+
+            return Convert.ToBase64String(array);
         }
 
-        public static string Decrypt(string data)
+        public static string Decrypt(string data, string password)
         {
             try
             {
-                RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
-                rsa.FromXmlString(key);
-                var decryptedData = rsa.Decrypt(Convert.FromBase64String(data), true);
-
-                return ToString(decryptedData);
+                CryptoStream cs = InternalDecrypt(Convert.FromBase64String(data), password);
+                StreamReader sr = new StreamReader(cs);
+                return sr.ReadToEnd();
             }
             catch
             {
@@ -35,6 +44,16 @@ namespace Lecturer.TestCreator
             }
         }
 
+        static CryptoStream InternalDecrypt(byte[] data, string password)
+        {
+            SymmetricAlgorithm sa = Rijndael.Create();
+            ICryptoTransform ct = sa.CreateDecryptor(
+                (new PasswordDeriveBytes(password, null)).GetBytes(16),
+                new byte[16]);
+
+            MemoryStream ms = new MemoryStream(data);
+            return new CryptoStream(ms, ct, CryptoStreamMode.Read);
+        }
 
         private static string ToString(byte[] data)
         {

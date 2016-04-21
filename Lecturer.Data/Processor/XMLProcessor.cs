@@ -142,17 +142,17 @@ namespace Lecturer.Data.Processor
             try
             {
                 //проходной балл и название
-                string mp = CryptoProcessor.Decrypt(XFile.Root.Attribute("minPoints").Value);
-                quiz.MinPoints = Convert.ToInt32(CryptoProcessor.Decrypt(XFile.Root.Attribute("minPoints").Value));
-                quiz.TestName = CryptoProcessor.Decrypt(XFile.Root.Attribute("testName").Value);
-
+                string key = XFile.Root.Attribute("testName").Value;
+                string mp = CryptoProcessor.Decrypt(XFile.Root.Attribute("minPoints").Value, key);
+                quiz.MinPoints = Convert.ToInt32(CryptoProcessor.Decrypt(XFile.Root.Attribute("minPoints").Value, key));
+                quiz.TestName = key;
                 //вопросы
                 quiz.Questions = new List<QuizItem>();
                 foreach(var question in XFile.Root.Elements("question"))
                 {
                     //вопрос
                     QuizItem qItem = new QuizItem();
-                    qItem.Text = CryptoProcessor.Decrypt(question.Attribute("text").Value);
+                    qItem.Text = CryptoProcessor.Decrypt(question.Attribute("text").Value, key);
 
                     //варианты ответа и значения
                     qItem.Answers = new List<string>();
@@ -161,8 +161,8 @@ namespace Lecturer.Data.Processor
 
                     foreach(var ans in question.Elements("ans"))
                     {
-                        qItem.Answers.Add(CryptoProcessor.Decrypt(ans.Attribute("text").Value));
-                        qItem.Values.Add(CryptoProcessor.Decrypt(ans.Attribute("value").Value));
+                        qItem.Answers.Add(CryptoProcessor.Decrypt(ans.Attribute("text").Value, key));
+                        qItem.Values.Add(CryptoProcessor.Decrypt(ans.Attribute("value").Value, key));
                         if (qItem.Values.LastOrDefault().ToLower() == "true")
                             counter += 1;
                     }
@@ -196,7 +196,6 @@ namespace Lecturer.Data.Processor
                 {
                     case "name": title = "Ім'я:"; break;
                     case "surname": title = "Прізвище:"; break;
-                    case "specialityName": title = "Напрям підготовки:"; break;
                     case "courceNumber": title = "Курс:"; break;
                     case "location": title = "Розташування сховища:"; break;
                     default: title = null; break;
@@ -214,7 +213,16 @@ namespace Lecturer.Data.Processor
                         CanChangeValue = (title == "specialityName") ? Visibility.Collapsed : Visibility.Visible
                     });
                 }
+
             }
+                uData.Add(new UserData
+                {
+                    Key = "remove",
+                    Value = "",
+                    Title = "Вийти з акаунта",
+                    Tag = uData.Count,
+                    CanChangeValue = Visibility.Visible
+                });
 
         }
         #endregion

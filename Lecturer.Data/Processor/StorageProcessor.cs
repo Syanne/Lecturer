@@ -93,9 +93,9 @@ namespace Lecturer.Data.Processor
                     string filename = TryGetFileByFTP(Cource.MyCource.GetServerSubpath, Cource.MyCource.RootFolderPath, ext);
                     bool flag = ProcessZipFile(filename, Cource.MyCource.RootFolderPath);
 
+                }
                     //загрузка расписания с сервера
                     ProcessSchedule(Cource.MyCource.InstituteCode);
-                }
             });
         }
 
