@@ -17,7 +17,7 @@ namespace Lecturer
             InitializeComponent();
             
             if (TryLoadUserData() == true)
-                mainFrame.Source = new Uri("CourcePage.xaml", UriKind.Relative);       
+                mainFrame.Source = new Uri("CoursePage.xaml", UriKind.Relative);       
             else mainFrame.Source = new Uri("StartPage.xaml", UriKind.Relative);
         }
 

@@ -9,11 +9,11 @@ using System.Linq;
 namespace Lecturer
 {
     /// <summary>
-    /// Interaction logic for CourcePage.xaml
+    /// Interaction logic for CoursePage.xaml
     /// </summary>
-    public partial class CourcePage : Page
+    public partial class CoursePage : Page
     {
-        public CourcePage()
+        public CoursePage()
         {
             InitializeComponent();
 
@@ -42,7 +42,7 @@ namespace Lecturer
                 //иначе - в папке программы на диске
                 catch
                 {
-                    var folderPath = System.IO.Path.Combine(Cource.MyCource.RootFolderPath, Cource.MyCource.Semester, StorageProcessor.ReplaceCharacters(selectedItem.Name, false));
+                    var folderPath = System.IO.Path.Combine(Course.MyCourse.RootFolderPath, Course.MyCourse.Semester, StorageProcessor.ReplaceCharacters(selectedItem.Name, false));
                     selectedItem.Topics = StorageProcessor.GetFolderNames(folderPath);
 
                     if (selectedItem.Topics != null)
@@ -57,7 +57,7 @@ namespace Lecturer
                 {
                     if (selectedItem.Topics != null)
                     {
-                        Cource.MyCource.SelectedSubject = (sender as ListView).SelectedItem as Subject;
+                        Course.MyCourse.SelectedSubject = (sender as ListView).SelectedItem as Subject;
 
                         NavigationService nav = NavigationService.GetNavigationService(this);
                         nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
@@ -82,15 +82,15 @@ namespace Lecturer
         /// </summary>
         private void PrepareData()
         {
-            if (Cource.MyCource.Subjects == null)
+            if (Course.MyCourse.Subjects == null)
             {
                 XMLProcessor xProc = new XMLProcessor("settings.xml");
 
-                Cource.MyCource.Subjects = xProc.GetSubjectList();
+                Course.MyCourse.Subjects = xProc.GetSubjectList();
 
 
-                if (Cource.MyCource.Subjects == null)
-                    Cource.MyCource.Subjects = new List<Subject>()
+                if (Course.MyCourse.Subjects == null)
+                    Course.MyCourse.Subjects = new List<Subject>()
                     {
                         new Subject()
                         {   Name = "Рассписание не найдено",
@@ -99,7 +99,7 @@ namespace Lecturer
                     };
             }
 
-            myList.ItemsSource = Cource.MyCource.Subjects;
+            myList.ItemsSource = Course.MyCourse.Subjects;
         }
     }
 }

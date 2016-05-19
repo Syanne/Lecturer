@@ -18,7 +18,7 @@ namespace Lecturer.Data.Entities
         public string Code { get; set; }
         public string Name { get; set; }
         public string FolderName { get; set; }
-        public List<int> Cources { get; set; }
+        public List<int> Courses { get; set; }
         public bool IsEnabled = false;
     }
 

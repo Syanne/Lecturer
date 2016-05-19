@@ -86,12 +86,12 @@ namespace Lecturer
                         XMLProcessor xProc = new XMLProcessor("settings.xml");
                         xProc.SetTopicStudied();
 
-                        Cource.MyCource.SelectedSubject.SelectedTopic.IsStudied = true;
+                        Course.MyCourse.SelectedSubject.SelectedTopic.IsStudied = true;
                     }
                 }
 
                 NavigationService nav = NavigationService.GetNavigationService(this);
-                Cource.MyCource.SelectedSubject.SelectedTopic = null;
+                Course.MyCourse.SelectedSubject.SelectedTopic = null;
                 nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
             }
         }
@@ -103,7 +103,7 @@ namespace Lecturer
         private void PrepareTest()
         {
             //файл теста
-            XMLProcessor x = new XMLProcessor(Cource.MyCource.SelectedSubject.SelectedTopic.TestUri);
+            XMLProcessor x = new XMLProcessor(Course.MyCourse.SelectedSubject.SelectedTopic.TestUri);
             MainQuiz = x.ReadQuizFile();
 
             if (MainQuiz != null)

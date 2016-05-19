@@ -10,22 +10,22 @@ namespace Lecturer.Data.Entities
     /// Содержит информацию о курсе дисциплин,
     /// изучаемых в данном семестре
     /// </summary>
-    public class Cource
+    public class Course
     {
-        private static Cource instance;
+        private static Course instance;
 
-        private Cource() { }
+        private Course() { }
 
         /// <summary>
         /// Курс дисциплин
         /// </summary>
-        public static Cource MyCource
+        public static Course MyCourse
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new Cource();
+                    instance = new Course();
                 }
                 return instance;
             }
@@ -58,7 +58,7 @@ namespace Lecturer.Data.Entities
         /// <summary>
         /// курс
         /// </summary>
-        public string CourceNumber { get; set; }
+        public string CourseNumber { get; set; }
 
         /// <summary>
         /// Текущий семестр

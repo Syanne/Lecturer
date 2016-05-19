@@ -19,7 +19,7 @@ namespace Lecturer
             InitializeComponent();            
 
             int counter = 0;
-            foreach(var item in Cource.MyCource.SelectedSubject.Topics)
+            foreach(var item in Course.MyCourse.SelectedSubject.Topics)
             {
                 if (counter < 1)
                 {
@@ -38,8 +38,8 @@ namespace Lecturer
                 else item.CircleColor = new SolidColorBrush(Colors.Gray);
             }
 
-            tbTitle.Text = Cource.MyCource.SelectedSubject.Name;
-            myList.ItemsSource = Cource.MyCource.SelectedSubject.Topics;
+            tbTitle.Text = Course.MyCourse.SelectedSubject.Name;
+            myList.ItemsSource = Course.MyCourse.SelectedSubject.Topics;
         }
         
 
@@ -55,11 +55,11 @@ namespace Lecturer
                     else
                     {
                         //иначе - загружаем файл
-                        Cource.MyCource.SelectedSubject.SelectedTopic = (sender as ListView).SelectedItem as Topic;
+                        Course.MyCourse.SelectedSubject.SelectedTopic = (sender as ListView).SelectedItem as Topic;
 
-                        var subj = Cource.MyCource.SelectedSubject;
-                        string uri = System.IO.Path.Combine(Cource.MyCource.RootFolderPath,
-                                        Cource.MyCource.Semester,
+                        var subj = Course.MyCourse.SelectedSubject;
+                        string uri = System.IO.Path.Combine(Course.MyCourse.RootFolderPath,
+                                        Course.MyCourse.Semester,
                                         StorageProcessor.ReplaceCharacters(subj.Name, false),
                                         StorageProcessor.ReplaceCharacters(subj.SelectedTopic.Name, false));
 
@@ -67,7 +67,7 @@ namespace Lecturer
 
                         if (path != null)
                         {
-                            Cource.MyCource.SelectedSubject.SelectedTopic.LectionUri = path;
+                            Course.MyCourse.SelectedSubject.SelectedTopic.LectionUri = path;
 
                             NavigationService nav = NavigationService.GetNavigationService(this);
                             nav.Navigate(new Uri("LectionPage.xaml", UriKind.RelativeOrAbsolute));
@@ -93,9 +93,9 @@ namespace Lecturer
 
         private void btnLink_Click(object sender, RoutedEventArgs e)
         {
-            Cource.MyCource.Subjects = null;
+            Course.MyCourse.Subjects = null;
             NavigationService nav = NavigationService.GetNavigationService(this);
-            nav.Navigate(new Uri("CourcePage.xaml", UriKind.RelativeOrAbsolute));
+            nav.Navigate(new Uri("CoursePage.xaml", UriKind.RelativeOrAbsolute));
 
         }
 

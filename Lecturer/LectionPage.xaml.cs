@@ -18,7 +18,7 @@ namespace Lecturer
         {
             InitializeComponent();
 
-            pdfControl.Filepath = Cource.MyCource.SelectedSubject.SelectedTopic.LectionUri;         
+            pdfControl.Filepath = Course.MyCourse.SelectedSubject.SelectedTopic.LectionUri;         
    
         }
 
@@ -26,20 +26,20 @@ namespace Lecturer
         {
             NavigationService nav = NavigationService.GetNavigationService(this);
             
-            string uri = Path.Combine(Cource.MyCource.RootFolderPath, 
-                    Cource.MyCource.Semester,
-                    StorageProcessor.ReplaceCharacters(Cource.MyCource.SelectedSubject.Name, false),
-                    StorageProcessor.ReplaceCharacters(Cource.MyCource.SelectedSubject.SelectedTopic.Name, false));
+            string uri = Path.Combine(Course.MyCourse.RootFolderPath, 
+                    Course.MyCourse.Semester,
+                    StorageProcessor.ReplaceCharacters(Course.MyCourse.SelectedSubject.Name, false),
+                    StorageProcessor.ReplaceCharacters(Course.MyCourse.SelectedSubject.SelectedTopic.Name, false));
 
             var path = StorageProcessor.GetFilePath(uri, "xml");
             //файл с тестом не найден
-            if (Cource.MyCource.SelectedSubject.SelectedTopic.IsStudied == true || path == null)
+            if (Course.MyCourse.SelectedSubject.SelectedTopic.IsStudied == true || path == null)
             {
                 XMLProcessor xProc = new XMLProcessor("settings.xml");
                 xProc.SetTopicStudied();
 
-                Cource.MyCource.SelectedSubject.SelectedTopic.IsStudied = true;
-                Cource.MyCource.SelectedSubject.SelectedTopic = null;
+                Course.MyCourse.SelectedSubject.SelectedTopic.IsStudied = true;
+                Course.MyCourse.SelectedSubject.SelectedTopic = null;
 
                 nav.Navigate(new Uri("SubjectPage.xaml", UriKind.RelativeOrAbsolute));
             }
@@ -47,7 +47,7 @@ namespace Lecturer
             //переход на страницу тестирования
             else
             {
-                Cource.MyCource.SelectedSubject.SelectedTopic.TestUri = path;
+                Course.MyCourse.SelectedSubject.SelectedTopic.TestUri = path;
                 nav.Navigate(new Uri("TestPage.xaml", UriKind.RelativeOrAbsolute));
             }
         }

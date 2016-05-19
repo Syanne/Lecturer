@@ -33,7 +33,7 @@ namespace Lecturer.Data.Processor
         }
         
         /// <summary>
-        /// загрузка файла настроек с инициализацией сущности Cource
+        /// загрузка файла настроек с инициализацией сущности Course
         /// </summary>
         public XMLProcessor()
         {
@@ -42,14 +42,14 @@ namespace Lecturer.Data.Processor
                 XFile = XDocument.Load("settings.xml");
                 var root = XFile.Root;
 
-                Cource.MyCource.Subjects = new List<Subject>();
-                Cource.MyCource.Semester = root.Attribute("semester").Value;
-                Cource.MyCource.CourceNumber = root.Attribute("courceNumber").Value;
-                Cource.MyCource.Subjects = GetSubjectList();
-                Cource.MyCource.InstituteCode = root.Attribute("institute").Value;
-                Cource.MyCource.SpecialityCode = root.Attribute("specialityCode").Value;
-                Cource.MyCource.SpecialityName = root.Attribute("specialityName").Value;
-                Cource.MyCource.RootFolderPath = System.IO.Path.Combine(root.Attribute("location").Value);
+                Course.MyCourse.Subjects = new List<Subject>();
+                Course.MyCourse.Semester = root.Attribute("semester").Value;
+                Course.MyCourse.CourseNumber = root.Attribute("courceNumber").Value;
+                Course.MyCourse.Subjects = GetSubjectList();
+                Course.MyCourse.InstituteCode = root.Attribute("institute").Value;
+                Course.MyCourse.SpecialityCode = root.Attribute("specialityCode").Value;
+                Course.MyCourse.SpecialityName = root.Attribute("specialityName").Value;
+                Course.MyCourse.RootFolderPath = System.IO.Path.Combine(root.Attribute("location").Value);
             }
             catch
             {
@@ -65,16 +65,14 @@ namespace Lecturer.Data.Processor
         /// <returns></returns>
         public List<Subject> GetSubjectList()
         {
-
             try
             {
                 List<Subject> subj = new List<Subject>();
 
                 //список дисциплин в семестре
-                var list = XFile.
-                                Root.
+                var list = XFile.Root.
                                 Elements("semester").
-                                Where(sem => sem.Attribute("number").Value == Cource.MyCource.Semester);
+                                Where(sem => sem.Attribute("number").Value == Course.MyCourse.Semester);
 
                 //заполняем список дисциплин
                 foreach (var subject in list.Elements("subject"))
@@ -106,7 +104,7 @@ namespace Lecturer.Data.Processor
             try {
                 List<Topic> topics = new List<Topic>();
                 var items = XFile.Root.Elements("semester")
-                            .FirstOrDefault(elem => elem.Attribute("number").Value == Cource.MyCource.Semester)
+                            .FirstOrDefault(elem => elem.Attribute("number").Value == Course.MyCourse.Semester)
                             .Elements("subject")
                             .SingleOrDefault(elem => elem.Attribute("name").Value == subjectName)
                             .Elements("topic");
@@ -273,11 +271,11 @@ namespace Lecturer.Data.Processor
         /// </summary>
         public void SetTopicStudied()
         {
-            string parent = Cource.MyCource.SelectedSubject.Name;
-            string name = Cource.MyCource.SelectedSubject.SelectedTopic.Name;
+            string parent = Course.MyCourse.SelectedSubject.Name;
+            string name = Course.MyCourse.SelectedSubject.SelectedTopic.Name;
 
             XFile.Root
-                .Elements("semester").Where(elem => elem.Attribute("number").Value == Cource.MyCource.Semester.ToString())
+                .Elements("semester").Where(elem => elem.Attribute("number").Value == Course.MyCourse.Semester.ToString())
                 .SingleOrDefault()
                 .Elements("subject").Where(subj => subj.Attribute("name").Value == parent)
                 .SingleOrDefault()
@@ -293,12 +291,12 @@ namespace Lecturer.Data.Processor
         /// </summary>
         public void WriteSemester()
         {
-            var elements = XFile.Root.Elements("semester").Where(sem => sem.Attribute("number").Value == Cource.MyCource.Semester);
+            var elements = XFile.Root.Elements("semester").Where(sem => sem.Attribute("number").Value == Course.MyCourse.Semester);
 
             if (elements.Count() == 0)
             {
-                XFile.Root.Attribute("semester").Value = Cource.MyCource.Semester;
-                XFile.Root.Attribute("courceNumber").Value = Cource.MyCource.CourceNumber;
+                XFile.Root.Attribute("semester").Value = Course.MyCourse.Semester;
+                XFile.Root.Attribute("courceNumber").Value = Course.MyCourse.CourseNumber;
                 //создаем корневой элемент данного семестра
                 using (XmlWriter writer = XFile.Root.CreateWriter())
                 {
@@ -309,20 +307,20 @@ namespace Lecturer.Data.Processor
                 var semester = XFile.Root.Elements("semester").LastOrDefault();
                 using (XmlWriter writer = semester.CreateWriter())
                 {
-                    GenerateAttribute(writer, "number", Cource.MyCource.Semester);
+                    GenerateAttribute(writer, "number", Course.MyCourse.Semester);
                 }
-                if (Cource.MyCource.Subjects != null)
+                if (Course.MyCourse.Subjects != null)
                 {
                     using (XmlWriter writer = semester.CreateWriter())
                     {
-                        foreach (var subj in Cource.MyCource.Subjects)
+                        foreach (var subj in Course.MyCourse.Subjects)
                             GenerateElement(writer, "subject", "");
                     }
 
 
-                    for (int i = 0; i < Cource.MyCource.Subjects.Count; i++)
+                    for (int i = 0; i < Course.MyCourse.Subjects.Count; i++)
                     {
-                        var subj = Cource.MyCource.Subjects[i];
+                        var subj = Course.MyCourse.Subjects[i];
                         using (XmlWriter innerWriter = semester.Elements("subject").ElementAt(i).CreateWriter())
                         {
                             GenerateAttribute(innerWriter, "name", subj.Name);
@@ -347,7 +345,7 @@ namespace Lecturer.Data.Processor
             {
                 //ищем дисциплину
                 var subject = XFile.Root.Elements("semester")
-                               .FirstOrDefault(elem => elem.Attribute("number").Value == Cource.MyCource.Semester)
+                               .FirstOrDefault(elem => elem.Attribute("number").Value == Course.MyCourse.Semester)
                                .Elements("subject")
                                .SingleOrDefault(elem => elem.Attribute("name").Value == subj.Name);
 

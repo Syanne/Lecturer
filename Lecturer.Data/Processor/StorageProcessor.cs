@@ -85,17 +85,17 @@ namespace Lecturer.Data.Processor
         {
             return Task.Run(() =>
             {
-                var folder = new DirectoryInfo(Path.Combine(Cource.MyCource.RootFolderPath, Cource.MyCource.Semester));
+                var folder = new DirectoryInfo(Path.Combine(Course.MyCourse.RootFolderPath, Course.MyCourse.Semester));
                 if (!folder.Exists)
                 {
                     //загрузка данных с сервера
                     string[] ext = { "zip" };
-                    string filename = TryGetFileByFTP(Cource.MyCource.GetServerSubpath, Cource.MyCource.RootFolderPath, ext);
-                    bool flag = ProcessZipFile(filename, Cource.MyCource.RootFolderPath);
+                    string filename = TryGetFileByFTP(Course.MyCourse.GetServerSubpath, Course.MyCourse.RootFolderPath, ext);
+                    bool flag = ProcessZipFile(filename, Course.MyCourse.RootFolderPath);
 
                 }
                     //загрузка расписания с сервера
-                    ProcessSchedule(Cource.MyCource.InstituteCode);
+                    ProcessSchedule(Course.MyCourse.InstituteCode);
             });
         }
 
@@ -183,7 +183,7 @@ namespace Lecturer.Data.Processor
             {
                 if (filename.Contains("zip"))
                 {
-                    var filepath = Path.Combine(Cource.MyCource.RootFolderPath, filename);
+                    var filepath = Path.Combine(Course.MyCourse.RootFolderPath, filename);
                     var enco = Encoding.GetEncoding("cp866");
                     ZipFile.ExtractToDirectory(filepath, extractPath, enco);
                     File.Delete(filepath);
@@ -231,16 +231,16 @@ namespace Lecturer.Data.Processor
             //скачивание
             string[] ext = { "xls", "xlst" };
             string subpath = instituteCode + @"/";
-            string filename = TryGetFileByFTP(subpath, Cource.MyCource.RootFolderPath, ext);
+            string filename = TryGetFileByFTP(subpath, Course.MyCourse.RootFolderPath, ext);
 
             //разбор и сохранение данных локально
-            string schedulePath = Path.Combine(Cource.MyCource.RootFolderPath, filename);
-            ExcelFileProcessor fp = new ExcelFileProcessor(schedulePath, Cource.MyCource.GroupName);
-            Cource.MyCource.Subjects = fp.FillSource();
+            string schedulePath = Path.Combine(Course.MyCourse.RootFolderPath, filename);
+            ExcelFileProcessor fp = new ExcelFileProcessor(schedulePath, Course.MyCourse.GroupName);
+            Course.MyCourse.Subjects = fp.FillSource();
 
             //удаление
             FileInfo fi = new FileInfo(schedulePath);
-            fi.Delete();
+            fi.Delete(); 
         }
 
 

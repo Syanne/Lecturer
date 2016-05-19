@@ -27,7 +27,7 @@ namespace Lecturer
         
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            if (comboCource.SelectedIndex > -1 && Folder.Text != "")
+            if (comboCourse.SelectedIndex > -1 && Folder.Text != "")
             {
                 loadingGrid.Visibility = Visibility.Visible;
                 ProcessUserFile();
@@ -45,7 +45,7 @@ namespace Lecturer
             if (result == System.Windows.Forms.DialogResult.OK)
             {
                 Folder.Text = folderDlg.SelectedPath;
-                Cource.MyCource.RootFolderPath = StorageProcessor.CreateDirectory(folderDlg.SelectedPath, "Лектор");
+                Course.MyCourse.RootFolderPath = StorageProcessor.CreateDirectory(folderDlg.SelectedPath, "Лектор");
             }
         }
 
@@ -53,8 +53,8 @@ namespace Lecturer
         {
             if (comboSpec.IsEnabled == true)
             {
-                comboCource.ItemsSource = null;
-                comboCource.IsEnabled = false;
+                comboCourse.ItemsSource = null;
+                comboCourse.IsEnabled = false;
             }
 
             comboSpec.ItemsSource = (comboIns.SelectedItem as Department).Specialities;
@@ -63,8 +63,8 @@ namespace Lecturer
 
         private void comboSpec_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            comboCource.ItemsSource = (comboSpec.SelectedItem as Speciality).Cources;
-            comboCource.IsEnabled = true;
+            comboCourse.ItemsSource = (comboSpec.SelectedItem as Speciality).Courses;
+            comboCourse.IsEnabled = true;
         }
         #endregion
 
@@ -97,7 +97,7 @@ namespace Lecturer
                             Name = spec.Attribute("name").Value,
                             Code = spec.Attribute("code").Value,
                             FolderName = spec.Attribute("folder").Value,
-                            Cources = new List<int>()
+                            Courses = new List<int>()
                         };
 
                         //курсы
@@ -105,7 +105,7 @@ namespace Lecturer
                         int start = Convert.ToInt32(spec.Attribute("first").Value);
                         for (int i = start; i <= count; i++)
                         {
-                            sp.Cources.Add(i);
+                            sp.Courses.Add(i);
                         }
 
                         ins.Specialities.Add(sp);
@@ -131,7 +131,7 @@ namespace Lecturer
             if (processor.XFile == null)
             {
                 //определить семестр
-                int courceValue = Convert.ToInt32(comboCource.SelectedValue);
+                int courceValue = Convert.ToInt32(comboCourse.SelectedValue);
                 int semester = 0;
                 if (DateTime.Now.Month > 1 && DateTime.Now.Month <= 5)
                     semester = courceValue * 2;
@@ -139,12 +139,12 @@ namespace Lecturer
                     semester = courceValue * 2 - 1;
 
 
-                Cource.MyCource.Semester = semester.ToString();
-                Cource.MyCource.GroupName = comboCource.SelectedValue.ToString() + " " + (comboSpec.SelectedValue as Speciality).Code;
-                Cource.MyCource.SpecialityCode = (comboSpec.SelectedValue as Speciality).FolderName;
-                Cource.MyCource.SpecialityName = (comboSpec.SelectedValue as Speciality).Name;
-                Cource.MyCource.InstituteCode = (comboIns.SelectedValue as Department).FolderName;
-                Cource.MyCource.CourceNumber = comboCource.SelectedValue.ToString();
+                Course.MyCourse.Semester = semester.ToString();
+                Course.MyCourse.GroupName = comboCourse.SelectedValue.ToString() + " " + (comboSpec.SelectedValue as Speciality).Code;
+                Course.MyCourse.SpecialityCode = (comboSpec.SelectedValue as Speciality).FolderName;
+                Course.MyCourse.SpecialityName = (comboSpec.SelectedValue as Speciality).Name;
+                Course.MyCourse.InstituteCode = (comboIns.SelectedValue as Department).FolderName;
+                Course.MyCourse.CourseNumber = comboCourse.SelectedValue.ToString();
 
 
                 //создание файла с настройками
@@ -152,12 +152,12 @@ namespace Lecturer
 
                 dictionary.Add("name", "");
                 dictionary.Add("surname", "");
-                dictionary.Add("location", Cource.MyCource.RootFolderPath);
-                dictionary.Add("institute", Cource.MyCource.InstituteCode);
-                dictionary.Add("specialityCode", Cource.MyCource.SpecialityCode);
-                dictionary.Add("specialityName", Cource.MyCource.SpecialityName);
-                dictionary.Add("courceNumber", Cource.MyCource.CourceNumber);
-                dictionary.Add("semester", Cource.MyCource.Semester);
+                dictionary.Add("location", Course.MyCourse.RootFolderPath);
+                dictionary.Add("institute", Course.MyCourse.InstituteCode);
+                dictionary.Add("specialityCode", Course.MyCourse.SpecialityCode);
+                dictionary.Add("specialityName", Course.MyCourse.SpecialityName);
+                dictionary.Add("courceNumber", Course.MyCourse.CourseNumber);
+                dictionary.Add("semester", Course.MyCourse.Semester);
 
                 //загрузка данных
                 await StorageProcessor.GetSemesterFilesAsync();
@@ -167,7 +167,7 @@ namespace Lecturer
             }
 
             NavigationService nav = NavigationService.GetNavigationService(this);
-            nav.Navigate(new Uri("CourcePage.xaml", UriKind.RelativeOrAbsolute));
+            nav.Navigate(new Uri("CoursePage.xaml", UriKind.RelativeOrAbsolute));
         }
     }
 }

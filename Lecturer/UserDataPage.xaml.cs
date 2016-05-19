@@ -31,7 +31,7 @@ namespace Lecturer
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             NavigationService nav = NavigationService.GetNavigationService(this);
-            nav.Navigate(new Uri("CourcePage.xaml", UriKind.RelativeOrAbsolute));
+            nav.Navigate(new Uri("CoursePage.xaml", UriKind.RelativeOrAbsolute));
         }
 
         private void btnOnListView_Click(object sender, RoutedEventArgs e)
@@ -99,7 +99,7 @@ namespace Lecturer
                     dir.Delete(true);
 
                     //меняем путь к директории
-                    Cource.MyCource.RootFolderPath = System.IO.Path.Combine(folderDlg.SelectedPath, "Лектор");
+                    Course.MyCourse.RootFolderPath = System.IO.Path.Combine(folderDlg.SelectedPath, "Лектор");
                     WriteDataIntoFile(System.IO.Path.Combine(folderDlg.SelectedPath, "Лектор"));
 
                     instance.Value = System.IO.Path.Combine(folderDlg.SelectedPath, "Лектор");
@@ -114,7 +114,7 @@ namespace Lecturer
         private async void LoadFilesFromServer(int courceValue)
         {
             loadingGrid.Visibility = Visibility.Visible;
-            Cource.MyCource.CourceNumber = courceValue.ToString();
+            Course.MyCourse.CourseNumber = courceValue.ToString();
 
             //проверяем текущий семестр (летние месяцы не относятся ни к одному из них)
             int semester = 0;
@@ -126,7 +126,7 @@ namespace Lecturer
             //сохраняем данные в файл с настройками и загружаем данные с сервера
             if (semester != 0)
             {
-                Cource.MyCource.Semester = semester.ToString();
+                Course.MyCourse.Semester = semester.ToString();
 
                 WriteDataIntoFile(courceValue.ToString());
 
@@ -134,7 +134,7 @@ namespace Lecturer
                 await StorageProcessor.GetSemesterFilesAsync();
 
                 xProc.WriteSemester();
-                Cource.MyCource.Subjects = xProc.GetSubjectList();
+                Course.MyCourse.Subjects = xProc.GetSubjectList();
             }
                 loadingGrid.Visibility = Visibility.Hidden;
         }
