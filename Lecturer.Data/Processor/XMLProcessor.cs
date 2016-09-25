@@ -274,8 +274,7 @@ namespace Lecturer.Data.Processor
             string parent = Course.MyCourse.SelectedSubject.Name;
             string name = Course.MyCourse.SelectedSubject.SelectedTopic.Name;
 
-            XFile.Root
-                .Elements("semester").Where(elem => elem.Attribute("number").Value == Course.MyCourse.Semester.ToString())
+            XFile.Root.Elements("semester").Where(elem => elem.Attribute("number").Value == Course.MyCourse.Semester.ToString())
                 .SingleOrDefault()
                 .Elements("subject").Where(subj => subj.Attribute("name").Value == parent)
                 .SingleOrDefault()

@@ -13,7 +13,6 @@ namespace Lecturer.Data.Processor
     public class ExcelFileProcessor
     {
         private string connectionString;
-
         private string sheetName;
         
         /// <summary>
@@ -27,8 +26,7 @@ namespace Lecturer.Data.Processor
             connectionString = GetConnectionString(path, "No");
             sheetName = _sheetName;
         }
-
-
+        
         /// <summary>
         /// Строка подключения к файлу 
         /// </summary>
